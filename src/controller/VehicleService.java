@@ -6,6 +6,7 @@
 package controller;
 
 import java.util.List;
+import javax.json.JsonArray;
 import model.Vehicle;
 
 /**
@@ -13,13 +14,22 @@ import model.Vehicle;
  * @author marti
  */
 public interface VehicleService {
-	void loadDataFromFile()		;
+
+	void loadDataFromFile();
+
 	void saveDataToFile();
-	int add();
+
+	int add(JsonArray arr);
+
 	boolean update(int id);
+
 	Vehicle searchById(int d);
+
 	List<Vehicle> searchByName(String name);
+
 	boolean delete(int id);
-	void showAll(List<Vehicle> list);
-	void showAllOrderedByPrice(List<Vehicle> list);
+
+	void showAll();
+
+	void showAllOrderedByPrice();
 }

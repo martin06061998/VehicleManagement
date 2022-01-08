@@ -9,18 +9,18 @@ package model;
  *
  * @author marti
  */
-public class Bike extends Vehicle {
+public class Car extends Vehicle {
 	private String type;
 	private short yearOfManufactured ;
 
-	public Bike()	{};
+	public Car() {};
 
-	public Bike(String type, short yearOfManufactured) {
+	public Car(String type, short yearOfManufactured) {
 		this.type = type;
 		this.yearOfManufactured = yearOfManufactured;
 	}
 
-	public Bike(String type, short yearOfManufactured, int id, String name, Color color, float price) {
+	public Car(String type, short yearOfManufactured, int id, String name, Color color, float price) {
 		super(id, name, color, price);
 		this.type = type;
 		this.yearOfManufactured = yearOfManufactured;
@@ -47,6 +47,11 @@ public class Bike extends Vehicle {
 	@Override
 	String serialize() {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + "Car{" + "type=" + type + ", yearOfManufactured=" + yearOfManufactured + '}';
 	}
 	
 }

@@ -59,4 +59,10 @@ public abstract class Vehicle {
 	}
 
 	abstract String serialize();
+
+	@Override
+	public String toString() {
+		return "Vehicle{" + "id=" + id + ", name=" + name + ", color=" + color + ", price=" + price + '}';
+	}
+	
 }
