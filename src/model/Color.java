@@ -5,12 +5,35 @@
  */
 package model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author marti
  */
-public enum  Color {
-	red,
-	blue,
-	green
+public enum Color {
+	red(1),
+	blue(2),
+	green(3);
+	private int value;
+	private static Map map = new HashMap<>();
+
+	private Color(int value) {
+		this.value = value;
+	}
+
+	static {
+		for (Color e : Color.values()) {
+			map.put(e.value, e);
+		}
+	}
+
+	public static Color valueOf(int value) {
+		return (Color) map.get(value);
+	}
+
+	public int getValue() {
+		return value;
+	}
 }

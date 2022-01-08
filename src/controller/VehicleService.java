@@ -5,8 +5,9 @@
  */
 package controller;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.List;
-import javax.json.JsonArray;
 import model.Vehicle;
 
 /**
@@ -19,7 +20,7 @@ public interface VehicleService {
 
 	void saveDataToFile();
 
-	int add(JsonArray arr);
+	int add(ObjectNode obj);
 
 	boolean update(int id);
 

@@ -13,9 +13,9 @@ public class Car extends Vehicle {
 	private String type;
 	private short yearOfManufactured ;
 
-	public Car() {};
+	Car() {};
 
-	public Car(String type, short yearOfManufactured) {
+	Car(String type, short yearOfManufactured) {
 		this.type = type;
 		this.yearOfManufactured = yearOfManufactured;
 	}

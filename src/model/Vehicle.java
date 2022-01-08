@@ -16,10 +16,10 @@ public abstract class Vehicle {
 	Color color;
 	float price;
 
-	public Vehicle() {
+	Vehicle() {
 	}
 
-	public Vehicle(int id, String name, Color color, float price) {
+	Vehicle(int id, String name, Color color, float price) {
 		this.id = id;
 		this.name = name;
 		this.color = color;

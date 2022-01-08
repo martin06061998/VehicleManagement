@@ -14,17 +14,9 @@ public class Motorbike extends Vehicle {
 	private String brand;
 	private float speed;
 
-	public Motorbike() {
-	}
+	Motorbike() {}
 
-	;
-
-	public Motorbike(String brand, float speed) {
-		this.brand = brand;
-		this.speed = speed;
-	}
-
-	public Motorbike(String brand, float speed, int id, String name, Color color, float price) {
+	Motorbike(String brand, float speed, int id, String name, Color color, float price) {
 		super(id, name, color, price);
 		this.brand = brand;
 		this.speed = speed;
