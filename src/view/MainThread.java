@@ -5,9 +5,6 @@
  */
 package view;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import controller.VehicleService;
 import controller.VehicleServiceProvider;
 import static java.lang.System.exit;
@@ -31,10 +28,10 @@ public class MainThread {
 			int choice = int_getChoice(mainMenu);
 			switch (choice) {
 				case 1:
-					VehicleServiceProvider.getProvider().getService().loadDataFromFile();
+					Menu.Load_Load_Menu();
 					break;
 				case 2:
-					Menu.Navigate_To_Add_Menu();
+					Menu.Load_Add_Form();
 					break;
 				case 3:
 					service.update(0);
@@ -43,13 +40,13 @@ public class MainThread {
 					service.delete(0);
 					break;
 				case 5:
-					service.searchById(12);
+					Menu.Load_Search_Menu();
 					break;
 				case 6:
 					service.showAll();
 					break;
 				case 7:
-					VehicleServiceProvider.getProvider().getService().saveDataToFile();
+					Menu.Load_Save_Menu();
 					break;
 				case 8:
 					System.out.println("good bye");

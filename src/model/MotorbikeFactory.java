@@ -6,16 +6,12 @@
 package model;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import controller.VehicleManager;
-import model.Color;
-import model.Motorbike;
 
 /**
  *
  * @author marti
  */
 class MotorbikeFactory extends I_Vehicle_Factory {
-
 	MotorbikeFactory() {
 		super();
 	}
@@ -27,18 +23,20 @@ class MotorbikeFactory extends I_Vehicle_Factory {
 
 	@Override
 	String buildRegex() {
-		return "\\{\"class\":\"motorbike\",\"name\":\"[A-Za-z]+(\\s[A-Za-z]+)*\".\"price\":(\\d+\\.\\d+|\\d+),\"color\":[1-3],\"brand\":\"[A-Za-z]+(\\s[A-Za-z]+)*\",\"speed\":(\\d+|\\d+\\.\\d+)\\}";
+		String regex =  "(?=^\\{\"[a-z]{2,10}\":((\\d{1,8}|\\d{1,8}\\.\\d{1,8})|(\"[A-Za-z\\s]{1,33}\"))(,\"[a-z]{2,10}\":((\\d{1,8}|\\d{1,8}\\.\\d{1,8})|(\"[A-Za-z\\s]{1,33}\"))){6}\\}$)(?=.*[,{]\"class\":\"motorbike\"[,}])(?=.*[,{]\"color\":\\d{1,3}[,}])(?=.*[,{]\"brand\":\"[A-Za-z\\s]{1,33}\"[,}])(?=.*[,{]\"name\":\"[A-Za-z\\s]{1,33}\"[,}])(?=.*[,{]\"price\":\\d{1,8}[,}])(?=.*[,{]\"speed\":\\d{1,8}|(\\d{1,8}\\.\\d{1,8})[,}])(?=.*[,{]\"id\":\\d{1,8}[,}]).*";
+		return regex;
 	}
 
 	@Override
 	Motorbike Create_Instance(ObjectNode obj) {
 		String name = obj.get("name").asText();
-		float price = obj.get("price").shortValue();
+		int price =  obj.get("price").asInt();
 		String brand = obj.get("brand").asText();
 		float speed = obj.get("speed").floatValue();
 		int color = obj.get("color").asInt();
+		int id = obj.get("id").asInt();
 		Motorbike newMotor = Create_Instance();
-		newMotor.setId(VehicleManager.getManager().size());
+		newMotor.setId(id);
 		newMotor.setName(name);
 		newMotor.setPrice(price);
 		newMotor.setBrand(brand);

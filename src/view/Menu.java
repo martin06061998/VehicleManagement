@@ -36,8 +36,7 @@ public class Menu {
 		return options;
 	}
 
-	public static void Navigate_To_Add_Menu() {
-
+	public static void Load_Add_Form() {
 		ArrayList<String> options = new ArrayList<>();
 		System.out.println("Welcome To Add Form");
 		options.add("Add a car");
@@ -48,10 +47,10 @@ public class Menu {
 			int choice = int_getChoice(options);
 			switch (choice) {
 				case 1:
-					Navigate_To_Add_SubMenu1();
+					Load_Add_SubForm1();
 					break;
 				case 2:
-					Navigate_To_Add_SubMenu2();
+					Load_Add_SubForm2();
 					break;
 				case 3:
 					return;
@@ -59,12 +58,12 @@ public class Menu {
 		}
 	}
 
-	public static void Navigate_To_Add_SubMenu1() {
+	private static void Load_Add_SubForm1() {
 		System.out.println("Welcome To Car Add Form");
 		String name = Inputter.inputNotBlankStr("Please enter name");
-		float price = Inputter.inputFloat("Please enter price");
+		int price = Inputter.inputInteger("Please enter price");
 		List<Color> colors = Arrays.asList(model.Color.values());
-		int color =  int_getChoice(colors);
+		int color = int_getChoice(colors);
 		String type = Inputter.inputNotBlankStr("Please enter type");
 		Short yearOfManufactured = Inputter.inputShort("Please enter year of manufactured");
 		ObjectMapper mapper = new ObjectMapper();
@@ -75,14 +74,15 @@ public class Menu {
 		node.put("color", color);
 		node.put("type", type);
 		node.put("year", yearOfManufactured);
-		service.add(node);
+		String reply = service.add(node);
+		System.out.println(reply);
 
 	}
 
-	public static void Navigate_To_Add_SubMenu2() {
+	private static void Load_Add_SubForm2() {
 		System.out.println("Welcome To Motorbike Add Form");
 		String name = Inputter.inputNotBlankStr("Please enter name");
-		float price = Inputter.inputFloat("Please enter price");
+		int price = Inputter.inputInteger("Please enter price");
 		List<Color> colors = Arrays.asList(model.Color.values());
 		int color = int_getChoice(colors);
 		String brand = Inputter.inputNotBlankStr("Please enter brand");
@@ -95,9 +95,46 @@ public class Menu {
 		node.put("color", color);
 		node.put("brand", brand);
 		node.put("speed", speed);
-		service.add(node);
+		String reply = service.add(node);
+		System.out.println(reply);
 	}
 
+	public static void Load_Search_Menu() {
+		System.out.println("Welcome To Search Page");;
+		ArrayList<String> options = new ArrayList<>();
+		options.add("Search by id");
+		options.add("Search by name");
+		options.add("Exit");
+		while (true) {
+			int choice = int_getChoice(options);
+			switch (choice) {
+				case 1:
+					Load_Search_SubMenu1();
+					break;
+				case 2:
+					Load_Search_SubMenu2();
+					break;
+				case 3:
+					return;
+			}
+		}
+	}
+
+	private static void Load_Search_SubMenu1() {
+
+	}
+
+	private static void Load_Search_SubMenu2() {
+
+	}
+	
+	public static void Load_Save_Menu(){
+		service.saveDataToFile();
+	}
+	
+	public static void Load_Load_Menu(){
+		service.loadDataFromFile();
+	}
 	public static <T> T ref_getChoice(List<T> options) {
 		int response;
 		do {

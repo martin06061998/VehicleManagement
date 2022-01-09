@@ -114,10 +114,10 @@ public class Inputter {
 		return response;
 	}
 
-	public static void pressEnterToContinue() {
+	/*public static void pressEnterToContinue() {
 		System.out.println("Press \"ENTER\" to continue...");
 		Scanner scanner = new Scanner(System.in);
 		scanner.nextLine();
 		//scanner.close();
-	}
+	}*/
 }

@@ -5,10 +5,7 @@
  */
 package controller;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.util.List;
-import model.Vehicle;
 
 /**
  *
@@ -20,13 +17,13 @@ public interface VehicleService {
 
 	void saveDataToFile();
 
-	int add(ObjectNode obj);
+	String add(ObjectNode obj);
 
 	boolean update(int id);
 
-	Vehicle searchById(int d);
+	ObjectNode searchById(int d);
 
-	List<Vehicle> searchByName(String name);
+	ObjectNode searchByName(String name);
 
 	boolean delete(int id);
 

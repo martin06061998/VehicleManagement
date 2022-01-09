@@ -5,6 +5,10 @@
  */
 package model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.Objects;
+
 /**
  *
  * @author marti
@@ -14,15 +18,27 @@ public class Motorbike extends Vehicle {
 	private String brand;
 	private float speed;
 
-	Motorbike() {}
+	Motorbike() {
+	}
 
-	Motorbike(String brand, float speed, int id, String name, Color color, float price) {
+	Motorbike(String brand, float speed, int id, String name, Color color, int price) throws IllegalArgumentException, NullPointerException {
 		super(id, name, color, price);
+		Objects.requireNonNull(brand, "brand should not be null");
+		if (brand.length() < 4) {
+			throw new IllegalArgumentException("brand should be at least 4 characters");
+		}
+		if (speed <= 0) {
+			throw new IllegalArgumentException("speed should not positive");
+		}
 		this.brand = brand;
 		this.speed = speed;
 	}
 
-	public void setBrand(String brand) {
+	public void setBrand(String brand) throws IllegalArgumentException, NullPointerException {
+		Objects.requireNonNull(brand, "brand should not be null");
+		if (brand.length() < 4) {
+			throw new IllegalArgumentException("brand should be at least 4 characters");
+		}
 		this.brand = brand;
 	}
 
@@ -30,7 +46,10 @@ public class Motorbike extends Vehicle {
 		return speed;
 	}
 
-	public void setSpeed(float speed) {
+	public void setSpeed(float speed) throws IllegalArgumentException {
+		if (speed <= 0) {
+			throw new IllegalArgumentException("speed should not positive");
+		}
 		this.speed = speed;
 	}
 
@@ -39,15 +58,21 @@ public class Motorbike extends Vehicle {
 	}
 
 	@Override
-	String serialize() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public ObjectNode serialize() {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode ret = mapper.createObjectNode();
+		ret.put("class", "motorbike");
+		ret.put("name", name);
+		ret.put("price", price);
+		ret.put("color", color.getValue());
+		ret.put("brand", brand);
+		ret.put("speed", speed);
+		return ret;
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + " Motorbike{" + "brand=" + brand + ", speed=" + speed + '}';
+		return "Class: Motorbike\n" + super.toString() + "\nbrand: " + brand + "\n" + "Speed: " + speed;
 	}
-	
-	
 
 }

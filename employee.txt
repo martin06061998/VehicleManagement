@@ -1,0 +1,1 @@
+[{"id":0,"name":"Thinh Nguyen","color":"green","price":12000,"type":"petro","yearOfManufactured":1998}]

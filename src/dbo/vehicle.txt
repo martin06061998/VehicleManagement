@@ -1,0 +1,2 @@
+{"class":"motorbike","name":"Martin Nguyen"."price":329000,"color":3,"brand":"BMW Company","speed":320.32}
+{"class":"car","name":"Jackie Chan","price":32000,"color":3,"type":"electric","year":1998}

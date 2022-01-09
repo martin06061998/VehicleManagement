@@ -5,7 +5,12 @@
  */
 package controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import dbo.FileHandlerManager;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +25,7 @@ import model.VehicleFactory;
  */
 final public class VehicleManager implements VehicleService {
 
-	transient private String filePath = "";
+	transient private String filePath = "C:\\Users\\marti\\Documents\\NetBeansProjects\\VehicleManagement\\src\\dbo\\vehicle.txt";
 	private List<Vehicle> vehicleList;
 	transient private static VehicleManager manager;
 
@@ -37,29 +42,46 @@ final public class VehicleManager implements VehicleService {
 
 	@Override
 	public void loadDataFromFile() {
-		System.out.println("File loaded successfully");
+		/*try {
+			StringBuffer buffer = FileHandlerManager.getInstance().readText(filePath);
+				ObjectMapper mapper = new ObjectMapper();
+			String[] e = buffer.toString().split("\n");
+			for (String s : e) {	
+				JsonNode actualObj = mapper.readTree(s);
+				Vehicle newVehicle = VehicleFactory.getInstane().New_Vehicle(s);
+				vehicleList.add(newVehicle);
+			}
+		} catch (IOException ex) {
+			System.out.println(ex.getMessage());
+		}*/
 	}
 
 	@Override
 	public void saveDataToFile() {
-		System.out.println("File save successfully");
+		try {
+			StringBuffer data = prepareDataForSaving();
+			FileHandlerManager.getInstance().writeText(data, filePath);
+		} catch (IOException ex) {
+			System.out.println(ex.getMessage());
+		}
 	}
 
 	@Override
-	public int add(ObjectNode obj) {
+	public String add(ObjectNode obj) {
+		String message;
 		if (Objects.isNull(obj)) {
-
+			message = "Add failed";
 		} else {
-			Vehicle newVehicle = VehicleFactory.getInstane().New_Vehicle(obj);
-			if (Objects.isNull(newVehicle)) {
-
-			} else {
+			try {
+				obj.put("id", vehicleList.size());
+				Vehicle newVehicle = VehicleFactory.getInstane().New_Vehicle(obj);
 				vehicleList.add(newVehicle);
-
+				message = "successfully added";
+			} catch (IllegalArgumentException | NullPointerException e) {
+				message = "Add failed due to " + e.getMessage();
 			}
 		}
-		return 0;
-
+		return message;
 	}
 
 	@Override
@@ -68,21 +90,54 @@ final public class VehicleManager implements VehicleService {
 	}
 
 	@Override
-	public Vehicle searchById(int id) {
+	public ObjectNode searchById(int id) {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode reply = mapper.createObjectNode();
 		if (id < 0) {
-			throw new IllegalArgumentException("Id is negative ( must be positive instead)");
+			reply.put("status", "error");
+			reply.put("message", "id is invalid");
+			reply.set("data", mapper.createObjectNode());
+			return reply;
 		}
 		Vehicle ret = findUnique((n) -> n.getId() == id);
-		return ret;
+		if (Objects.isNull(ret)) {
+			reply.put("status", "accepted");
+			reply.put("message", "not found");
+			reply.set("data", mapper.createObjectNode());
+		} else {
+			//JsonNode node = mapper.valueToTree(ret);
+			ObjectNode vehicle = mapper.convertValue(ret, ObjectNode.class);
+			reply.put("status", "accepted");
+			reply.put("message", "found");
+			reply.set("data", vehicle);
+		}
+		return reply;
 	}
 
 	@Override
-	public List<Vehicle> searchByName(String name) {
+	public ObjectNode searchByName(String name) {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode reply = mapper.createObjectNode();
 		if (Objects.isNull(name)) {
-			throw new IllegalArgumentException("argument (name) is null");
+			reply.put("status", "error");
+			reply.put("message", "argument \"name\" should not be null");
+			ArrayNode data = mapper.createArrayNode();
+			reply.set("data", data);
+			return reply;
 		}
 		List<Vehicle> ret = findAll((n) -> n.getName().equalsIgnoreCase(name));
-		return ret;
+		if (ret.isEmpty()) {
+			reply.put("status", "accepted");
+			reply.put("message", "not found any vehicle");
+			ArrayNode data = mapper.createArrayNode();
+			reply.set("data", data);
+		} else {
+			reply.put("status", "accepted");
+			reply.put("message", "found");
+			ArrayNode data = mapper.valueToTree(ret);
+			reply.set("data", data);
+		}
+		return reply;
 	}
 
 	@Override
@@ -118,5 +173,17 @@ final public class VehicleManager implements VehicleService {
 
 	public int size() {
 		return vehicleList.size();
+	}
+
+	private StringBuffer prepareDataForSaving() {
+		StringBuffer ret = new StringBuffer();
+		int size = vehicleList.size();
+		for (int i = 0; i < size; i++) {
+			ret.append(vehicleList.get(i).serialize());
+			if (i < size - 1) {
+				ret.append("\n");
+			}
+		}
+		return ret;
 	}
 }

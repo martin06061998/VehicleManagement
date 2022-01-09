@@ -7,8 +7,6 @@ package model;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.HashMap;
-import java.util.Objects;
-import model.Vehicle;
 
 /**
  *
@@ -29,29 +27,27 @@ final public class VehicleFactory {
 			factory.factoryList = new HashMap<>();
 			factory.factoryList.put("car", new CarFactory());
 			factory.factoryList.put("motorbike", new MotorbikeFactory());
-
 		}
 		return factory;
 	}
 
-	public Vehicle New_Vehicle(ObjectNode obj) {
-		String type = checkType(obj.toString());
+	public Vehicle New_Vehicle(ObjectNode obj) throws IllegalArgumentException {
 		Vehicle ret = null;
-		if (Objects.isNull(type)) {
-			return ret;
-		}
-		ret = factory.factoryList.get(type).Create_Instance(obj);
-		return ret;
-	}
+		if (obj.has("class") && obj.get("class").isTextual()) {
+			String key = obj.get("class").asText();
+			if (factory.factoryList.containsKey(key)) {
+				String regex = factory.factoryList.get(key).getRegex();
+				String target = obj.toString();
+				if (target.matches(regex)) {
+					return factory.factoryList.get(key).Create_Instance(obj);
+				}
+				else
+					throw new IllegalArgumentException("invalid format");
+			}else
+				throw new IllegalArgumentException("type of vehicle not found");
 
-	private String checkType(String target) {
-		for (String key : factory.factoryList.keySet()) {
-			String regex = factory.factoryList.get(key).getRegex();
-			if (target.matches(regex)) {
-				return key;
-			}
+		} else {
+			throw new IllegalArgumentException("invalid format");
 		}
-		return null;
 	}
-
 }

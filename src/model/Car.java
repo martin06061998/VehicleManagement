@@ -5,34 +5,48 @@
  */
 package model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.Calendar;
+import java.util.Objects;
+
 /**
  *
  * @author marti
  */
 public class Car extends Vehicle {
+
 	private String type;
-	private short yearOfManufactured ;
+	private short yearOfManufactured;
 
-	Car() {};
-
-	Car(String type, short yearOfManufactured) {
-		this.type = type;
-		this.yearOfManufactured = yearOfManufactured;
+	Car() {
 	}
 
-	public Car(String type, short yearOfManufactured, int id, String name, Color color, float price) {
+	;
+
+	public Car(String type, short yearOfManufactured, int id, String name, Color color, int price) throws IllegalArgumentException, NullPointerException {
 		super(id, name, color, price);
+		Objects.requireNonNull(type, "arugument \"type\" should not be null");
+		if (type.length() < 4) {
+			throw new IllegalArgumentException("argument \"type\" should be at least 4 characters");
+		}
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		if (yearOfManufactured <= 1960 || yearOfManufactured > year) {
+			throw new IllegalArgumentException("argument \"year\" is invalid");
+		}
 		this.type = type;
 		this.yearOfManufactured = yearOfManufactured;
 	}
-
-	
 
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(String type) throws IllegalArgumentException, NullPointerException {
+		Objects.requireNonNull(type, "arugument \"type\" should not be null");
+		if (type.length() < 4) {
+			throw new IllegalArgumentException("argument \"type\" should be at least 4 characters");
+		}
 		this.type = type;
 	}
 
@@ -40,18 +54,30 @@ public class Car extends Vehicle {
 		return yearOfManufactured;
 	}
 
-	public void setYearOfManufactured(short yearOfManufactured) {
+	public void setYearOfManufactured(short yearOfManufactured) throws IllegalArgumentException {
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		if (yearOfManufactured <= 1960 || yearOfManufactured > year) {
+			throw new IllegalArgumentException("argument \"year\" is invalid");
+		}
 		this.yearOfManufactured = yearOfManufactured;
 	}
-	
+
 	@Override
-	String serialize() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public ObjectNode serialize() {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode ret = mapper.createObjectNode();
+		ret.put("class", "car");
+		ret.put("name", name);
+		ret.put("price", price);
+		ret.put("color", color.getValue());
+		ret.put("type", type);
+		ret.put("year", yearOfManufactured);
+		return ret;
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + "Car{" + "type=" + type + ", yearOfManufactured=" + yearOfManufactured + '}';
+		return "Class: Car\n" + super.toString() + "\ntype: " + type + "\n" + "Year of manufactured: " + yearOfManufactured;
 	}
-	
+
 }
