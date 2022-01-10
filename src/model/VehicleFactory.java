@@ -5,6 +5,7 @@
  */
 package model;
 
+import Utilities.StringUtilities;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.HashMap;
 
@@ -14,7 +15,7 @@ import java.util.HashMap;
  */
 final public class VehicleFactory {
 
-	private HashMap<String, I_Vehicle_Factory> factoryList;
+	private HashMap<Class<? extends Vehicle>, I_Vehicle_Factory> factoryList;
 	private static VehicleFactory factory;
 
 	private VehicleFactory() {
@@ -25,29 +26,34 @@ final public class VehicleFactory {
 		if (factory == null) {
 			factory = new VehicleFactory();
 			factory.factoryList = new HashMap<>();
-			factory.factoryList.put("car", new CarFactory());
-			factory.factoryList.put("motorbike", new MotorbikeFactory());
+			factory.factoryList.put(Car.class, new CarFactory());
+			factory.factoryList.put(Motorbike.class, new MotorbikeFactory());
 		}
 		return factory;
 	}
 
-	public Vehicle New_Vehicle(JsonNode obj) throws IllegalArgumentException {
+	@SuppressWarnings("element-type-mismatch")
+	public Vehicle New_Vehicle(JsonNode obj) throws IllegalArgumentException, NullPointerException, ClassNotFoundException {
+		boolean errorFree = true;
 		Vehicle ret = null;
 		if (obj.has("class") && obj.get("class").isTextual()) {
 			String key = obj.get("class").asText();
-			if (factory.factoryList.containsKey(key)) {
-				String regex = factory.factoryList.get(key).getRegex();
-				String target = obj.toString();
-				if (target.matches(regex)) {
-					return factory.factoryList.get(key).Create_Instance(obj);
-				}
-				else
-					throw new IllegalArgumentException("invalid format");
-			}else
-				throw new IllegalArgumentException("type of vehicle not found");
+			Class<?> clazz = Class.forName("model." + StringUtilities.Standard_CamelCase_Str(key, "\\s"));
+			if (factoryList.containsKey(clazz)) 
+				ret = factoryList.get(clazz).Create_Instance(obj);
+			else 
+				errorFree = false;
 
-		} else {
+		} 
+		else 
+			errorFree = false;
+		if(errorFree == false)
 			throw new IllegalArgumentException("invalid format");
-		}
+		return ret;
+	}
+
+	public <T extends Vehicle> boolean reforge(T vehicle, JsonNode obj) {
+		factory.factoryList.get(vehicle.getClass()).reforge(vehicle, obj);
+		return true;
 	}
 }

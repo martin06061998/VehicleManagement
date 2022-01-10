@@ -1,2 +1,3 @@
-{"type":"petrol","class":"car","id":0,"name":"Thinh Nguyen","price":120000,"year":1998,"color":3}
-{"price":32000,"color":2,"name":"quang teo","class":"motorbike","id":1,"brand":"BMW Company","speed":12.32}
+{"class":"motorbike","id":"0","name":"thinh nguyen","price":"120000","color":"2","brand":"bmw","license":"true","speed":123.32}
+{"class":"motorbike","id":"1","name":"jackie love","price":"327000","color":"3","brand":"martin company","license":"false","speed":32.12}
+{"class":"car","id":"2","name":"skyber","price":"123000","color":"3","brand":"black dragun","type":"electric","year":"1993"}

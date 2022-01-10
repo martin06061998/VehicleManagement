@@ -6,17 +6,18 @@
 package model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import controller.VehicleManager;
 
 /**
  *
  * @author marti
  */
-class CarFactory extends I_Vehicle_Factory {
+class CarFactory extends I_Vehicle_Factory<Car> {
 
 	CarFactory() {
 		super();
+		regexMap.put("type", "[A-Za-z\\s]{1,33}");
+		regexMap.put("year", "\\d{4}");
+		regexMap.put("class", "car");
 	}
 
 	@Override
@@ -25,27 +26,33 @@ class CarFactory extends I_Vehicle_Factory {
 	}
 
 	@Override
-	String buildRegex() {
-		return "(?=^\\{\"[a-z]{2,10}\":((\\d{1,8}|\\d{1,8}\\.\\d{1,8})|(\"[A-Za-z\\s]{1,33}\"))(,\"[a-z]{2,10}\":((\\d{1,8}|\\d{1,8}\\.\\d{1,8})|(\"[A-Za-z\\s]{1,33}\"))){6}\\}$)(?=.*[,{]\"class\":\"car\"[,}])(?=.*[,{]\"color\":\\d{1,3}[,}])(?=.*[,{]\"type\":\"[A-Za-z\\s]{1,33}\"[,}])(?=.*[,{]\"name\":\"[A-Za-z\\s]{1,33}\"[,}])(?=.*[,{]\"price\":\\d{1,8}[,}])(?=.*[,{]\"year\":\\d{4}[,}])(?=.*[,{]\"id\":\\d{1,8}[,}]).*";
+	public Car Create_Instance(JsonNode obj) throws IllegalArgumentException {
+		boolean isValidFormat = checkPattern(obj);
+		if (isValidFormat) {
+			Car newCar = Create_Instance();
+			String id = obj.get("id").asText();
+			String name = obj.get("name").asText();
+			String color = obj.get("color").asText();
+			String price = obj.get("price").asText();
+			String brand = obj.get("brand").asText();
+			String type = obj.get("type").asText();
+			String year = obj.get("year").asText();
+
+			newCar.setId(Integer.parseInt(id));
+			newCar.setName(name);
+			newCar.setColor(Color.valueOf(Integer.parseInt(color)));
+			newCar.setPrice(Integer.parseInt(price));
+			newCar.setBrand(brand);
+			newCar.setType(type);
+			newCar.setYearOfManufactured(Integer.parseInt(year));
+			return newCar;
+		} else {
+			throw new IllegalArgumentException("Format is invalid");
+		}
 	}
 
 	@Override
-	Car Create_Instance(JsonNode obj) {
-		Car newCar = Create_Instance();
-		String name = obj.get("name").asText();
-		int id = obj.get("id").asInt();
-		int price = obj.get("price").asInt();
-		String type = obj.get("type").asText();
-		short yearOfManufactured = obj.get("year").shortValue();
-		int color = obj.get("color").asInt();
-		
-		newCar.setId(id);
-		newCar.setName(name);
-		newCar.setPrice(price);
-		newCar.setType(type);
-		newCar.setYearOfManufactured(yearOfManufactured);
-		newCar.setColor(Color.valueOf(color));
-		return newCar;
+	boolean reforge(Car c, JsonNode obj) throws NullPointerException, IllegalArgumentException {
+		return true;
 	}
-
 }

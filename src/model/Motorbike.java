@@ -8,7 +8,6 @@ package model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 /**
  *
@@ -16,35 +15,23 @@ import java.util.Objects;
  */
 public class Motorbike extends Vehicle {
 
-	private String brand;
-	private float speed;
+	float speed;
+	boolean licenseRequire;
 
 	Motorbike() {
 	}
 
-	Motorbike(String brand, float speed, int id, String name, Color color, int price) throws IllegalArgumentException, NullPointerException {
-		super(id, name, color, price);
-		Objects.requireNonNull(brand, "brand should not be null");
-		if (brand.length() < 4) {
-			throw new IllegalArgumentException("brand should be at least 4 characters");
-		}
+	Motorbike(int id, String name, Color color, int price, String brand, float speed, boolean licenseRequire) throws IllegalArgumentException, NullPointerException {
+		super(id, name, color, price, brand);
 		if (speed <= 0) {
 			throw new IllegalArgumentException("speed should not positive");
 		}
-		this.brand = brand;
+		this.licenseRequire = licenseRequire;
 		this.speed = speed;
 	}
 
-	public void setBrand(String brand) throws IllegalArgumentException, NullPointerException {
-		Objects.requireNonNull(brand, "brand should not be null");
-		if (brand.length() < 4) {
-			throw new IllegalArgumentException("brand should be at least 4 characters");
-		}
-		this.brand = brand;
-	}
-
-	public float getSpeed() {
-		return speed;
+	public void setLicenseRequire(boolean licenseRequire) {
+		this.licenseRequire = licenseRequire;
 	}
 
 	public void setSpeed(float speed) throws IllegalArgumentException {
@@ -58,23 +45,33 @@ public class Motorbike extends Vehicle {
 		System.out.println("tin tin tin");
 	}
 
+	public float getSpeed() {
+		return speed;
+	}
+
+	public boolean isLicenseRequire() {
+		return licenseRequire;
+	}
+
 	@Override
 	public String serialize() {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode ret = mapper.createObjectNode();
-		ret.put("price", price);
-		ret.put("color", color.getValue());
-		ret.put("name", name);
 		ret.put("class", "motorbike");
-		ret.put("id", id);
+		ret.put("id", String.valueOf(id));
+		ret.put("name", name);
+		ret.put("price", String.valueOf(price));
+		ret.put("color", String.valueOf(color.getValue()));
 		ret.put("brand", brand);
+		
+		ret.put("license", String.valueOf(licenseRequire));
 		ret.put("speed", speed);
 		return ret.toString();
 	}
 
 	@Override
 	public String toString() {
-		return "Class: Motorbike\n" + super.toString() + "\nbrand: " + brand + "\n" + "Speed: " + speed;
+		return "Class: Motorbike\n" + super.toString() + "\n" + "Speed: " + speed + "\nLicense require: " + licenseRequire;
 	}
 
 }

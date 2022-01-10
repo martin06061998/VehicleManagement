@@ -5,6 +5,7 @@
  */
 package controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
@@ -19,13 +20,13 @@ public interface VehicleService {
 
 	String add(ObjectNode obj);
 
-	boolean update(int id);
+	JsonNode update(JsonNode obj);
 
-	ObjectNode searchById(int d);
+	JsonNode searchById(int d);
 
-	ObjectNode searchByName(String name);
+	JsonNode searchByName(String name);
 
-	boolean delete(int id);
+	JsonNode delete(int id);
 
 	void showAll();
 

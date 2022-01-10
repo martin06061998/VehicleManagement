@@ -34,16 +34,16 @@ public class MainThread {
 					Menu.Load_Add_Form();
 					break;
 				case 3:
-					service.update(0);
+					Menu.Load_Update_Menu();
 					break;
 				case 4:
-					service.delete(0);
+					Menu.Load_Delete_Form();
 					break;
 				case 5:
 					Menu.Load_Search_Menu();
 					break;
 				case 6:
-					service.showAll();
+					Menu.Load_Show_Menu();
 					break;
 				case 7:
 					Menu.Load_Save_Menu();

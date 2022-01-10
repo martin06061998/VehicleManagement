@@ -5,7 +5,7 @@
  */
 package model;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import Utilities.StringUtilities;
 import java.util.Objects;
 
 /**
@@ -18,35 +18,30 @@ public abstract class Vehicle {
 	String name;
 	Color color;
 	int price;
+	String brand;
 
 	Vehicle() {
 	}
 
-	Vehicle(int id, String name, Color color, int price) throws IllegalArgumentException,NullPointerException {
+	Vehicle(int id, String name, Color color, int price, String brand) throws IllegalArgumentException, NullPointerException {
 		Objects.requireNonNull(name, "arugument \"name\" should not be null");
+		Objects.requireNonNull(brand, "arugument \"brand\" should not be null");
+		Objects.requireNonNull(color, "argument \"color\" should not be null");
 		if (name.length() < 4) {
 			throw new IllegalArgumentException("argument \"name\" should be at least 4 characters");
 		}
-		Objects.requireNonNull(color, "argument \"color\" should not be null");
 		if (price <= 0) {
 			throw new IllegalArgumentException("Price should not be negative or zero");
 		}
 		this.id = id;
-		this.name = name;
+		this.name = StringUtilities.Standard_Lowercase_Str(name);
 		this.color = color;
 		this.price = price;
-	}
-
-	public int getId() {
-		return id;
+		this.brand = StringUtilities.Standard_Lowercase_Str(brand);
 	}
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public void setName(String name) throws IllegalArgumentException, NullPointerException {
@@ -54,11 +49,7 @@ public abstract class Vehicle {
 		if (name.length() < 4) {
 			throw new IllegalArgumentException("argument \"name\" should be at least 4 characters");
 		}
-		this.name = name;
-	}
-
-	public Color getColor() {
-		return color;
+		this.name =StringUtilities.Standard_Lowercase_Str(name);
 	}
 
 	public void setColor(Color color) throws NullPointerException {
@@ -66,8 +57,9 @@ public abstract class Vehicle {
 		this.color = color;
 	}
 
-	public int getPrice() {
-		return price;
+	public void setBrand(String brand) throws NullPointerException {
+		Objects.requireNonNull(brand, "arugument \"brand\" should not be null");
+		this.brand = StringUtilities.Standard_Lowercase_Str(brand);
 	}
 
 	/**
@@ -82,11 +74,31 @@ public abstract class Vehicle {
 		this.price = price;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	public String getBrand() {
+		return brand;
+	}
+
 	public abstract String serialize();
 
 	@Override
 	public String toString() {
-		return "id :" + id + "\n" + "name: " + name + "\n" + "Color: " + color + "\n" + "Price: " + price;
+		return "Id :" + id + "\n" + "Name: " + name + "\n" + "Color: " + color + "\n" + "Price: " + price + "\nBrand"+ brand;
 	}
 
 }

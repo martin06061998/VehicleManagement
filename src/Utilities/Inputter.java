@@ -67,6 +67,25 @@ public class Inputter {
 		return response;
 	}
 
+	public static boolean inputBoolean(String msg) {
+		Scanner sc;
+		boolean flag = false;
+		boolean response = false;
+		String inputData;
+		while (!flag) {
+			try {
+				System.out.println(msg);
+				sc = new Scanner(System.in);
+				inputData = sc.nextLine();
+				response = Boolean.parseBoolean(inputData);
+				flag = true;
+			} catch (NumberFormatException e) {
+				System.err.println("Invalid input. Please enter true/false only");
+			}
+		}
+		return response;
+	}
+
 	public static int inputInteger(String msg) {
 		Scanner sc;
 		boolean flag = false;

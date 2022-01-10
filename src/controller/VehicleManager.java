@@ -5,6 +5,7 @@
  */
 package controller;
 
+import Utilities.StringUtilities;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -12,8 +13,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import dbo.FileHandlerManager;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -27,17 +28,17 @@ import model.VehicleFactory;
  */
 final public class VehicleManager implements VehicleService {
 
-	transient private String filePath = "C:\\Users\\marti\\Documents\\NetBeansProjects\\VehicleManagement\\src\\dbo\\vehicle.txt";
+	private final transient String filePath = "src\\dbo\\vehicle.txt";
 	private List<Vehicle> vehicleList;
 	transient private static VehicleManager manager;
 
 	private VehicleManager() {
-		vehicleList = new ArrayList<>();
 	}
 
 	public static VehicleManager getManager() {
 		if (Objects.isNull(manager)) {
 			manager = new VehicleManager();
+			manager.vehicleList = new ArrayList<>();
 		}
 		return manager;
 	}
@@ -53,102 +54,130 @@ final public class VehicleManager implements VehicleService {
 				vehicleList.add(newVehicle);
 
 			}
-		} catch (IOException | IllegalArgumentException ex) {
+		} catch (IOException | IllegalArgumentException | NullPointerException | ClassNotFoundException ex) {
 			System.out.println(ex.getMessage());
 		}
 	}
 
 	@Override
 	public void saveDataToFile() {
+		String message = null;
 		try {
 			List<String> data = prepareDataForSaving();
-			if(Objects.isNull(data)){
-				System.out.println("Nothing to save");
-				return;
-			}
+			Objects.requireNonNull(data);
 			FileHandlerManager.getInstance().writeText(data, filePath);
-		} catch (IOException ex) {
-			System.out.println(ex.getMessage());
+			message = "save successfully";
+		} catch (IOException | NullPointerException ex) {
+			message = "cannot save data to file";
 		}
 	}
 
 	@Override
 	public String add(ObjectNode obj) {
 		String message;
-		if (Objects.isNull(obj)) {
-			message = "Add failed";
-		} else {
-			try {
-				obj.put("id", vehicleList.size());
-				Vehicle newVehicle = VehicleFactory.getInstane().New_Vehicle(obj);
-				vehicleList.add(newVehicle);
-				message = "successfully added";
-			} catch (IllegalArgumentException | NullPointerException e) {
-				message = "Add failed due to " + e.getMessage();
-			}
+		try {
+			Objects.requireNonNull(obj);
+			obj.put("id", vehicleList.size());
+			Vehicle newVehicle = VehicleFactory.getInstane().New_Vehicle(obj);
+			vehicleList.add(newVehicle);
+			message = "successfully added";
+		} catch (IllegalArgumentException | ClassNotFoundException | NullPointerException e) {
+			System.out.println(e.getMessage());
+			message = "Add to failed due to invalid data type";
 		}
+
 		return message;
 	}
 
 	@Override
-	public boolean update(int id) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public JsonNode update(JsonNode obj) {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode reply = mapper.createObjectNode();
+		try {
+			String id = obj.get("id").asText();
+			Vehicle v = findUnique((n) -> n.getId() == Integer.parseInt(id));
+			Objects.requireNonNull(v);
+			VehicleFactory.getInstane().reforge(v, obj);
+			reply.put("status", "success");
+			reply.put("message", "sucessfully update");
+			ObjectNode vehicle = mapper.convertValue(v, ObjectNode.class);
+			reply.set("data", vehicle);
+		} catch (IllegalArgumentException | NullPointerException e) {
+			reply.put("status", "fail");
+			reply.put("message", "something is wrong, no change is made");
+			reply.set("data", mapper.createObjectNode());
+		}
+
+		return reply;
 	}
 
 	@Override
-	public ObjectNode searchById(int id) {
+	public JsonNode searchById(int id) {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode reply = mapper.createObjectNode();
 		if (id < 0) {
-			reply.put("status", "error");
+			reply.put("status", "fail");
 			reply.put("message", "id is invalid");
 			reply.set("data", mapper.createObjectNode());
 			return reply;
 		}
 		Vehicle ret = findUnique((n) -> n.getId() == id);
 		if (Objects.isNull(ret)) {
-			reply.put("status", "accepted");
-			reply.put("message", "not found");
+			reply.put("status", "fail");
+			reply.put("message", "no vehicle have such an id");
 			reply.set("data", mapper.createObjectNode());
 		} else {
 			//JsonNode node = mapper.valueToTree(ret);
 			ObjectNode vehicle = mapper.convertValue(ret, ObjectNode.class);
-			reply.put("status", "accepted");
-			reply.put("message", "found");
+			reply.put("status", "success");
+			reply.put("message", "a vehicle has been found");
 			reply.set("data", vehicle);
 		}
 		return reply;
 	}
 
 	@Override
-	public ObjectNode searchByName(String name) {
+	public JsonNode searchByName(String name) {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode reply = mapper.createObjectNode();
-		if (Objects.isNull(name)) {
-			reply.put("status", "error");
-			reply.put("message", "argument \"name\" should not be null");
-			ArrayNode data = mapper.createArrayNode();
-			reply.set("data", data);
-			return reply;
-		}
-		List<Vehicle> ret = findAll((n) -> n.getName().equalsIgnoreCase(name));
-		if (ret.isEmpty()) {
-			reply.put("status", "accepted");
-			reply.put("message", "not found any vehicle");
-			ArrayNode data = mapper.createArrayNode();
-			reply.set("data", data);
-		} else {
-			reply.put("status", "accepted");
+		try {
+			Objects.requireNonNull(name);
+			List<Vehicle> ret = findAll((n) -> StringUtilities.Standard_Lowercase_Str(n.getName()).contains(StringUtilities.Standard_Lowercase_Str(name)));
+			Objects.requireNonNull(ret);
+			ret.sort((v1, v2) -> v2.getName().compareTo(v1.getName()));
+			reply.put("status", "success");
 			reply.put("message", "found");
 			ArrayNode data = mapper.valueToTree(ret);
+			reply.set("data", data);
+		} catch (IllegalArgumentException | NullPointerException e) {
+			reply.put("status", "fail");
+			reply.put("message", "invalid inputl");
+			ArrayNode data = mapper.createArrayNode();
 			reply.set("data", data);
 		}
 		return reply;
 	}
 
 	@Override
-	public boolean delete(int id) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public JsonNode delete(int id) {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode reply = mapper.createObjectNode();
+		if (id < 0) {
+			reply.put("status", "fail");
+			reply.put("message", "id is invalid, no change is made");
+			return reply;
+		}
+		Vehicle ret = findUnique((n) -> n.getId() == id);
+		if (Objects.isNull(ret)) {
+			reply.put("status", "fail");
+			reply.put("message", "id not found, no change is made");
+		} else {
+			//JsonNode node = mapper.valueToTree(ret);
+			vehicleList.remove(ret);
+			reply.put("status", "success");
+			reply.put("message", "successfully deleted");
+		}
+		return reply;
 	}
 
 	private void show(List<Vehicle> list) {
@@ -164,7 +193,12 @@ final public class VehicleManager implements VehicleService {
 
 	@Override
 	public void showAllOrderedByPrice() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<Vehicle> lst = sort((v1, v2) -> v2.getPrice() - v1.getPrice());
+		if (Objects.isNull(lst)) {
+			System.out.println("Nothing to show");
+		} else {
+			show(lst);
+		}
 	}
 
 	private Vehicle findUnique(Predicate<Vehicle> predicate) {
@@ -188,6 +222,15 @@ final public class VehicleManager implements VehicleService {
 			Function<Vehicle, String> fun = (n) -> n.serialize();
 			ret = vehicleList.stream().map(fun).collect(Collectors.toList());
 		}
+		return ret;
+	}
+
+	private List<Vehicle> sort(Comparator<Vehicle> comparator) {
+		if (vehicleList.isEmpty()) {
+			return null;
+		}
+		List<Vehicle> ret = new ArrayList<>(vehicleList);
+		ret.sort(comparator);
 		return ret;
 	}
 }

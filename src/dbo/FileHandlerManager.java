@@ -19,8 +19,7 @@ final public class FileHandlerManager {
 	private HashMap<String, FileHandler> handlerList;
 	private static FileHandlerManager manager;
 
-	private FileHandlerManager() {
-	}
+	private FileHandlerManager() {}
 
 	public static FileHandlerManager getInstance() {
 		if (Objects.isNull(manager)) {
@@ -32,7 +31,7 @@ final public class FileHandlerManager {
 	}
 
 	public List<String> readText(String filePath) throws IOException {
-		 List<String>  data =  (List<String>) manager.handlerList.get("TextFileHandler").read(filePath);
+		 List<String> data = (List<String>) manager.handlerList.get("TextFileHandler").read(filePath);
 		return data;
 	}
 
