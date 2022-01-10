@@ -5,6 +5,7 @@
  */
 package model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controller.VehicleManager;
 
@@ -29,7 +30,7 @@ class CarFactory extends I_Vehicle_Factory {
 	}
 
 	@Override
-	Car Create_Instance(ObjectNode obj) {
+	Car Create_Instance(JsonNode obj) {
 		Car newCar = Create_Instance();
 		String name = obj.get("name").asText();
 		int id = obj.get("id").asInt();

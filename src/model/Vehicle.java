@@ -82,7 +82,7 @@ public abstract class Vehicle {
 		this.price = price;
 	}
 
-	public abstract ObjectNode serialize();
+	public abstract String serialize();
 
 	@Override
 	public String toString() {

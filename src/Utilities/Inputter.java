@@ -12,9 +12,8 @@ import java.util.Scanner;
  */
 public class Inputter {
 
-	private static final Scanner sc = new Scanner(System.in);
-
 	public static String inputPatternStr(String msg, String pattern) {
+		Scanner sc = new Scanner(System.in);
 		boolean flag = false;
 		String response = "";
 		while (!flag) {
@@ -28,14 +27,17 @@ public class Inputter {
 				response = sc.nextLine().trim();
 			}
 		}
+		sc.close();
 		return response;
 	}
 
 	public static String inputNotBlankStr(String msg) {
+		Scanner sc;
 		boolean flag = false;
 		String response = "";
 		while (!flag) {
 			System.out.println(msg);
+			sc = new Scanner(System.in);
 			response = sc.nextLine().trim();
 			if (!response.isEmpty()) {
 				flag = true;
@@ -47,12 +49,14 @@ public class Inputter {
 	}
 
 	public static short inputShort(String msg) {
+		Scanner sc;
 		boolean flag = false;
 		Short response = 0;
 		String inputData;
 		while (!flag) {
 			try {
 				System.out.println(msg);
+				sc = new Scanner(System.in);
 				inputData = sc.nextLine();
 				response = Short.parseShort(inputData);
 				flag = true;
@@ -64,12 +68,14 @@ public class Inputter {
 	}
 
 	public static int inputInteger(String msg) {
+		Scanner sc;
 		boolean flag = false;
 		int response = 0;
 		String inputData;
 		while (!flag) {
 			try {
 				System.out.println(msg);
+				sc = new Scanner(System.in);
 				inputData = sc.nextLine();
 				response = Integer.parseInt(inputData);
 				flag = true;
@@ -81,12 +87,14 @@ public class Inputter {
 	}
 
 	public static float inputFloat(String msg) {
+		Scanner sc;
 		boolean flag = false;
 		float response = 0;
 		String inputData;
 		while (!flag) {
 			try {
 				System.out.println(msg);
+				sc = new Scanner(System.in);
 				inputData = sc.nextLine();
 				response = Float.parseFloat(inputData);
 				flag = true;
@@ -98,12 +106,14 @@ public class Inputter {
 	}
 
 	public static double inputDouble(String msg) {
+		Scanner sc;
 		boolean flag = false;
 		double response = 0;
 		String inputData;
 		while (!flag) {
 			try {
 				System.out.println(msg);
+				sc = new Scanner(System.in);
 				inputData = sc.nextLine();
 				response = Double.parseDouble(inputData);
 				flag = true;

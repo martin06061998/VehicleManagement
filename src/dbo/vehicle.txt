@@ -1,2 +1,2 @@
-{"class":"motorbike","name":"Martin Nguyen"."price":329000,"color":3,"brand":"BMW Company","speed":320.32}
-{"class":"car","name":"Jackie Chan","price":32000,"color":3,"type":"electric","year":1998}
+{"type":"petrol","class":"car","id":0,"name":"Thinh Nguyen","price":120000,"year":1998,"color":3}
+{"price":32000,"color":2,"name":"quang teo","class":"motorbike","id":1,"brand":"BMW Company","speed":12.32}

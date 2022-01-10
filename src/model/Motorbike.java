@@ -7,6 +7,7 @@ package model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -58,16 +59,17 @@ public class Motorbike extends Vehicle {
 	}
 
 	@Override
-	public ObjectNode serialize() {
+	public String serialize() {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode ret = mapper.createObjectNode();
-		ret.put("class", "motorbike");
-		ret.put("name", name);
 		ret.put("price", price);
 		ret.put("color", color.getValue());
+		ret.put("name", name);
+		ret.put("class", "motorbike");
+		ret.put("id", id);
 		ret.put("brand", brand);
 		ret.put("speed", speed);
-		return ret;
+		return ret.toString();
 	}
 
 	@Override

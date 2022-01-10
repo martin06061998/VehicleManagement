@@ -5,7 +5,7 @@
  */
 package model;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  *
@@ -28,7 +28,7 @@ class MotorbikeFactory extends I_Vehicle_Factory {
 	}
 
 	@Override
-	Motorbike Create_Instance(ObjectNode obj) {
+	Motorbike Create_Instance(JsonNode obj) {
 		String name = obj.get("name").asText();
 		int price =  obj.get("price").asInt();
 		String brand = obj.get("brand").asText();

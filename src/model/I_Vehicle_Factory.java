@@ -5,7 +5,7 @@
  */
 package model;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import model.Vehicle;
 
 /**
@@ -20,7 +20,7 @@ abstract class I_Vehicle_Factory<T extends Vehicle> {
 		regex = buildRegex();
 	}
 	abstract T Create_Instance();
-	abstract T Create_Instance(ObjectNode obj);
+	abstract T Create_Instance(JsonNode obj);
 	abstract String buildRegex();
 	String getRegex() {
 		return regex;

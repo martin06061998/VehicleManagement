@@ -7,6 +7,7 @@ package model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -63,16 +64,17 @@ public class Car extends Vehicle {
 	}
 
 	@Override
-	public ObjectNode serialize() {
+	public String serialize() {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode ret = mapper.createObjectNode();
+		ret.put("type", type);
 		ret.put("class", "car");
+		ret.put("id", id);
 		ret.put("name", name);
 		ret.put("price", price);
-		ret.put("color", color.getValue());
-		ret.put("type", type);
 		ret.put("year", yearOfManufactured);
-		return ret;
+		ret.put("color", color.getValue());
+		return ret.toString();
 	}
 
 	@Override

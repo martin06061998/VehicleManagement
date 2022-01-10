@@ -5,7 +5,7 @@
  */
 package model;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.HashMap;
 
 /**
@@ -31,7 +31,7 @@ final public class VehicleFactory {
 		return factory;
 	}
 
-	public Vehicle New_Vehicle(ObjectNode obj) throws IllegalArgumentException {
+	public Vehicle New_Vehicle(JsonNode obj) throws IllegalArgumentException {
 		Vehicle ret = null;
 		if (obj.has("class") && obj.get("class").isTextual()) {
 			String key = obj.get("class").asText();

@@ -5,15 +5,17 @@
  */
 package controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dbo.FileHandlerManager;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import model.Vehicle;
@@ -42,24 +44,28 @@ final public class VehicleManager implements VehicleService {
 
 	@Override
 	public void loadDataFromFile() {
-		/*try {
-			StringBuffer buffer = FileHandlerManager.getInstance().readText(filePath);
-				ObjectMapper mapper = new ObjectMapper();
-			String[] e = buffer.toString().split("\n");
-			for (String s : e) {	
-				JsonNode actualObj = mapper.readTree(s);
-				Vehicle newVehicle = VehicleFactory.getInstane().New_Vehicle(s);
+		try {
+			List<String> data = FileHandlerManager.getInstance().readText(filePath);
+			ObjectMapper mapper = new ObjectMapper();
+			for (String s : data) {
+				JsonNode node = mapper.readTree(s);
+				Vehicle newVehicle = VehicleFactory.getInstane().New_Vehicle(node);
 				vehicleList.add(newVehicle);
+
 			}
-		} catch (IOException ex) {
+		} catch (IOException | IllegalArgumentException ex) {
 			System.out.println(ex.getMessage());
-		}*/
+		}
 	}
 
 	@Override
 	public void saveDataToFile() {
 		try {
-			StringBuffer data = prepareDataForSaving();
+			List<String> data = prepareDataForSaving();
+			if(Objects.isNull(data)){
+				System.out.println("Nothing to save");
+				return;
+			}
 			FileHandlerManager.getInstance().writeText(data, filePath);
 		} catch (IOException ex) {
 			System.out.println(ex.getMessage());
@@ -175,14 +181,12 @@ final public class VehicleManager implements VehicleService {
 		return vehicleList.size();
 	}
 
-	private StringBuffer prepareDataForSaving() {
-		StringBuffer ret = new StringBuffer();
+	private List<String> prepareDataForSaving() {
 		int size = vehicleList.size();
-		for (int i = 0; i < size; i++) {
-			ret.append(vehicleList.get(i).serialize());
-			if (i < size - 1) {
-				ret.append("\n");
-			}
+		List<String> ret = null;
+		if (size != 0) {
+			Function<Vehicle, String> fun = (n) -> n.serialize();
+			ret = vehicleList.stream().map(fun).collect(Collectors.toList());
 		}
 		return ret;
 	}

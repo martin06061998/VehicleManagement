@@ -7,6 +7,7 @@ package dbo;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -30,12 +31,12 @@ final public class FileHandlerManager {
 		return manager;
 	}
 
-	public StringBuffer readText(String filePath) throws IOException {
-		StringBuffer buffer = (StringBuffer) manager.handlerList.get("TextFileHandler").read(filePath);
-		return buffer;
+	public List<String> readText(String filePath) throws IOException {
+		 List<String>  data =  (List<String>) manager.handlerList.get("TextFileHandler").read(filePath);
+		return data;
 	}
 
-	public void writeText(StringBuffer data, String filePath) throws IOException {
+	public void writeText(List<String> data, String filePath) throws IOException {
 		manager.handlerList.get("TextFileHandler").write(data, filePath);
 	}
 }
