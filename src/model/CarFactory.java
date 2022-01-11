@@ -17,7 +17,7 @@ class CarFactory extends I_Vehicle_Factory<Car> {
 		super();
 		regexMap.put("type", "[A-Za-z\\s]{1,33}");
 		regexMap.put("year", "\\d{4}");
-		regexMap.put("class", "car");
+		regexMap.put("class", "(?i)car");
 	}
 
 	@Override
@@ -40,7 +40,7 @@ class CarFactory extends I_Vehicle_Factory<Car> {
 
 			newCar.setId(Integer.parseInt(id));
 			newCar.setName(name);
-			newCar.setColor(Color.valueOf(Integer.parseInt(color)));
+			newCar.setColor(color);
 			newCar.setPrice(Integer.parseInt(price));
 			newCar.setBrand(brand);
 			newCar.setType(type);
@@ -52,7 +52,19 @@ class CarFactory extends I_Vehicle_Factory<Car> {
 	}
 
 	@Override
-	boolean reforge(Car c, JsonNode obj) throws NullPointerException, IllegalArgumentException {
-		return true;
+	Car reforge(Car c, JsonNode obj) throws NullPointerException, IllegalArgumentException {
+		boolean isValidFormat = checkPattern(obj);
+		if (isValidFormat) {
+			c.setName(obj.get("name").asText());
+			c.setColor((obj.get("color").asText()));
+			c.setPrice(Integer.parseInt(obj.get("color").asText()));
+			c.setBrand(obj.get("brand").asText());
+			c.setType(obj.get("type").asText());
+			c.setYearOfManufactured(Integer.parseInt(obj.get("year").asText()));
+			return c;
+		} else {
+			throw new IllegalArgumentException("invalid format");
+		}
+
 	}
 }

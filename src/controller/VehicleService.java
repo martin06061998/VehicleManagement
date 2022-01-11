@@ -18,7 +18,7 @@ public interface VehicleService {
 
 	void saveDataToFile();
 
-	String add(ObjectNode obj);
+	JsonNode add(ObjectNode obj);
 
 	JsonNode update(JsonNode obj);
 

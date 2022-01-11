@@ -52,8 +52,7 @@ final public class VehicleFactory {
 		return ret;
 	}
 
-	public <T extends Vehicle> boolean reforge(T vehicle, JsonNode obj) {
-		factory.factoryList.get(vehicle.getClass()).reforge(vehicle, obj);
-		return true;
-	}
+	public <T extends Vehicle> Vehicle reforge(T vehicle, JsonNode obj) throws IllegalArgumentException, NullPointerException {
+		return factory.factoryList.get(vehicle.getClass()).reforge(vehicle, obj);
+	} 
 }

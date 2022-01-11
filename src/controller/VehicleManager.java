@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import model.Motorbike;
 import model.Vehicle;
 import model.VehicleFactory;
 
@@ -73,20 +74,22 @@ final public class VehicleManager implements VehicleService {
 	}
 
 	@Override
-	public String add(ObjectNode obj) {
-		String message;
+	public JsonNode add(ObjectNode obj) {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode reply = mapper.createObjectNode();
 		try {
 			Objects.requireNonNull(obj);
 			obj.put("id", vehicleList.size());
 			Vehicle newVehicle = VehicleFactory.getInstane().New_Vehicle(obj);
 			vehicleList.add(newVehicle);
-			message = "successfully added";
+			reply.put("status", "success");
+			reply.put("message", "successfully added");
 		} catch (IllegalArgumentException | ClassNotFoundException | NullPointerException e) {
-			System.out.println(e.getMessage());
-			message = "Add to failed due to invalid data type";
-		}
+			reply.put("status", "success");
+			reply.put("message", "Add to failed due to invalid data type");
 
-		return message;
+		}
+		return reply;
 	}
 
 	@Override
@@ -100,12 +103,9 @@ final public class VehicleManager implements VehicleService {
 			VehicleFactory.getInstane().reforge(v, obj);
 			reply.put("status", "success");
 			reply.put("message", "sucessfully update");
-			ObjectNode vehicle = mapper.convertValue(v, ObjectNode.class);
-			reply.set("data", vehicle);
 		} catch (IllegalArgumentException | NullPointerException e) {
 			reply.put("status", "fail");
 			reply.put("message", "something is wrong, no change is made");
-			reply.set("data", mapper.createObjectNode());
 		}
 
 		return reply;
@@ -127,8 +127,8 @@ final public class VehicleManager implements VehicleService {
 			reply.put("message", "no vehicle have such an id");
 			reply.set("data", mapper.createObjectNode());
 		} else {
-			//JsonNode node = mapper.valueToTree(ret);
-			ObjectNode vehicle = mapper.convertValue(ret, ObjectNode.class);
+			ObjectNode vehicle = (ObjectNode) ret.serialize();
+			vehicle.put("class",   ret.getClass().getSimpleName());
 			reply.put("status", "success");
 			reply.put("message", "a vehicle has been found");
 			reply.set("data", vehicle);
@@ -183,6 +183,9 @@ final public class VehicleManager implements VehicleService {
 	private void show(List<Vehicle> list) {
 		for (int i = 0; i < list.size(); i++) {
 			System.out.println(list.get(i));
+			if (list.get(i) instanceof Motorbike) {
+				((Motorbike) list.get(i)).makeSound();
+			}
 		}
 	}
 
@@ -219,7 +222,7 @@ final public class VehicleManager implements VehicleService {
 		int size = vehicleList.size();
 		List<String> ret = null;
 		if (size != 0) {
-			Function<Vehicle, String> fun = (n) -> n.serialize();
+			Function<Vehicle, String> fun = (n) -> n.serialize().toString();
 			ret = vehicleList.stream().map(fun).collect(Collectors.toList());
 		}
 		return ret;

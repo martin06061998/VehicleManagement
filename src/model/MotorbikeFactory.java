@@ -15,7 +15,7 @@ class MotorbikeFactory extends I_Vehicle_Factory<Motorbike> {
 
 	MotorbikeFactory() {
 		super();
-		regexMap.put("class", "motorbike");
+		regexMap.put("class", "(?i)motorbike");
 		regexMap.put("license", "([tT][rR][uU][eE])|([fF][aA][lL][sS][eE])");
 		regexMap.put("speed", "\\d{1,8}|(\\d{1,8}\\.\\d{1,8})");
 	}
@@ -40,7 +40,7 @@ class MotorbikeFactory extends I_Vehicle_Factory<Motorbike> {
 
 			newMotor.setId(Integer.parseInt(id));
 			newMotor.setName(name);
-			newMotor.setColor(Color.valueOf(Integer.parseInt(color)));
+			newMotor.setColor(color);
 			newMotor.setPrice(Integer.parseInt(price));
 			newMotor.setBrand(brand);
 			newMotor.setSpeed(Float.parseFloat(speed));
@@ -52,7 +52,18 @@ class MotorbikeFactory extends I_Vehicle_Factory<Motorbike> {
 	}
 
 	@Override
-	boolean reforge(Motorbike m, JsonNode obj) {
-		return true;
+	Motorbike reforge(Motorbike m, JsonNode obj) {
+		boolean isValidFormat = checkPattern(obj);
+		if (isValidFormat) {
+			m.setName(obj.get("name").asText());
+			m.setColor(obj.get("color").asText());
+			m.setPrice(Integer.parseInt(obj.get("color").asText()));
+			m.setBrand(obj.get("brand").asText());
+			m.setSpeed(Float.parseFloat(obj.get("speed").asText()));
+			m.setLicenseRequire(Boolean.parseBoolean(obj.get("license").asText()));
+			return m;
+		} else {
+			throw new IllegalArgumentException("invalid format");
+		}
 	}
 }

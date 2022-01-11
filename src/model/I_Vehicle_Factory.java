@@ -23,7 +23,7 @@ abstract class I_Vehicle_Factory<T extends Vehicle> {
 		regexMap.put("name", "[A-Za-z\\s]{1,33}");
 		regexMap.put("price", "\\d{1,8}");
 		regexMap.put("brand", "[A-Za-z\\s]{1,33}");
-		regexMap.put("color", "\\d{1,3}");
+		regexMap.put("color", "(?i)(red)|(green)|(blue)");
 
 	}
 
@@ -31,7 +31,7 @@ abstract class I_Vehicle_Factory<T extends Vehicle> {
 
 	public abstract T Create_Instance(JsonNode obj);
 
-	abstract boolean reforge(T vehicle, JsonNode obj);
+	abstract T reforge(T vehicle, JsonNode obj);
 
 	final boolean checkPattern(JsonNode obj) {
 		boolean isValidFormat = true;
@@ -44,6 +44,10 @@ abstract class I_Vehicle_Factory<T extends Vehicle> {
 				isValidFormat = false;
 				break;
 			}
+			/*if (!obj.get(key).isTextual()) {
+				isValidFormat = false;
+				break;
+			}*/
 			regex = regexMap.get(key);
 			target = obj.get(key).asText();
 			if (!target.matches(regex)) {

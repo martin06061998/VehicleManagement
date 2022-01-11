@@ -6,6 +6,7 @@
 package model;
 
 import Utilities.StringUtilities;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.Calendar;
@@ -25,7 +26,7 @@ public class Car extends Vehicle {
 
 	;
 
-	public Car(int id, String name, Color color, int price, String brand, String type, int yearOfManufactured) throws IllegalArgumentException, NullPointerException {
+	public Car(int id, String name, String color, int price, String brand, String type, int yearOfManufactured) throws IllegalArgumentException, NullPointerException {
 		super(id, name, color, price, brand);
 		Objects.requireNonNull(type, "arugument \"type\" should not be null");
 		int year = Calendar.getInstance().get(Calendar.YEAR);
@@ -58,18 +59,18 @@ public class Car extends Vehicle {
 	}
 
 	@Override
-	public String serialize() {
+	public JsonNode serialize() {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode ret = mapper.createObjectNode();
 		ret.put("class", "car");
 		ret.put("id", String.valueOf(id));
 		ret.put("name", name);
 		ret.put("price", String.valueOf(price));
-		ret.put("color", String.valueOf(color.getValue()));
+		ret.put("color", color);
 		ret.put("brand", brand);
 		ret.put("type", type);
 		ret.put("year", String.valueOf(yearOfManufactured));
-		return ret.toString();
+		return ret;
 	}
 
 	@Override

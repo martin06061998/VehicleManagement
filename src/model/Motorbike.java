@@ -5,9 +5,9 @@
  */
 package model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.math.BigDecimal;
 
 /**
  *
@@ -21,7 +21,7 @@ public class Motorbike extends Vehicle {
 	Motorbike() {
 	}
 
-	Motorbike(int id, String name, Color color, int price, String brand, float speed, boolean licenseRequire) throws IllegalArgumentException, NullPointerException {
+	Motorbike(int id, String name, String color, int price, String brand, float speed, boolean licenseRequire) throws IllegalArgumentException, NullPointerException {
 		super(id, name, color, price, brand);
 		if (speed <= 0) {
 			throw new IllegalArgumentException("speed should not positive");
@@ -54,19 +54,18 @@ public class Motorbike extends Vehicle {
 	}
 
 	@Override
-	public String serialize() {
+	public JsonNode serialize() {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode ret = mapper.createObjectNode();
 		ret.put("class", "motorbike");
 		ret.put("id", String.valueOf(id));
 		ret.put("name", name);
 		ret.put("price", String.valueOf(price));
-		ret.put("color", String.valueOf(color.getValue()));
+		ret.put("color", color);
 		ret.put("brand", brand);
-		
 		ret.put("license", String.valueOf(licenseRequire));
-		ret.put("speed", speed);
-		return ret.toString();
+		ret.put("speed", String.valueOf(speed));
+		return ret;
 	}
 
 	@Override

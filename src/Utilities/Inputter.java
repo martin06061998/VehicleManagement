@@ -13,10 +13,11 @@ import java.util.Scanner;
 public class Inputter {
 
 	public static String inputPatternStr(String msg, String pattern) {
-		Scanner sc = new Scanner(System.in);
+		Scanner sc;
 		boolean flag = false;
 		String response = "";
 		while (!flag) {
+			sc= new Scanner(System.in); 
 			if (response.matches(pattern)) {
 				flag = true;
 			} else if (response.isEmpty()) {
@@ -27,7 +28,6 @@ public class Inputter {
 				response = sc.nextLine().trim();
 			}
 		}
-		sc.close();
 		return response;
 	}
 
