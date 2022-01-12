@@ -21,22 +21,22 @@ class CarFactory extends I_Vehicle_Factory<Car> {
 	}
 
 	@Override
-	Car Create_Instance() {
+	Car createInstance() {
 		return new Car();
 	}
 
 	@Override
-	public Car Create_Instance(JsonNode obj) throws IllegalArgumentException {
-		boolean isValidFormat = checkPattern(obj);
+	Car createInstance(JsonNode target) throws IllegalArgumentException {
+		boolean isValidFormat = checkPattern(target);
 		if (isValidFormat) {
-			Car newCar = Create_Instance();
-			String id = obj.get("id").asText();
-			String name = obj.get("name").asText();
-			String color = obj.get("color").asText();
-			String price = obj.get("price").asText();
-			String brand = obj.get("brand").asText();
-			String type = obj.get("type").asText();
-			String year = obj.get("year").asText();
+			Car newCar = createInstance();
+			String id = target.get("id").asText();
+			String name = target.get("name").asText();
+			String color = target.get("color").asText();
+			String price = target.get("price").asText();
+			String brand = target.get("brand").asText();
+			String type = target.get("type").asText();
+			String year = target.get("year").asText();
 
 			newCar.setId(Integer.parseInt(id));
 			newCar.setName(name);
@@ -52,16 +52,18 @@ class CarFactory extends I_Vehicle_Factory<Car> {
 	}
 
 	@Override
-	Car reforge(Car c, JsonNode obj) throws NullPointerException, IllegalArgumentException {
-		boolean isValidFormat = checkPattern(obj);
+	Car reforge(JsonNode request) throws NullPointerException, IllegalArgumentException {
+		boolean isValidFormat = checkPattern(request);
 		if (isValidFormat) {
-			c.setName(obj.get("name").asText());
-			c.setColor((obj.get("color").asText()));
-			c.setPrice(Integer.parseInt(obj.get("color").asText()));
-			c.setBrand(obj.get("brand").asText());
-			c.setType(obj.get("type").asText());
-			c.setYearOfManufactured(Integer.parseInt(obj.get("year").asText()));
-			return c;
+			Car reforgedCar = createInstance();
+			reforgedCar.setId(Integer.parseInt(request.get("id").asText()));
+			reforgedCar.setName(request.get("name").asText());
+			reforgedCar.setColor((request.get("color").asText()));		
+			reforgedCar.setPrice(Integer.parseInt(request.get("price").asText()));
+			reforgedCar.setBrand(request.get("brand").asText());
+			reforgedCar.setType(request.get("type").asText());
+			reforgedCar.setYearOfManufactured(Integer.parseInt(request.get("year").asText()));
+			return reforgedCar;
 		} else {
 			throw new IllegalArgumentException("invalid format");
 		}

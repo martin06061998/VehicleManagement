@@ -5,7 +5,7 @@
  */
 package model;
 
-import Utilities.StringUtilities;
+import utilities.StringUtilities;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.HashMap;
 
@@ -33,14 +33,14 @@ final public class VehicleFactory {
 	}
 
 	@SuppressWarnings("element-type-mismatch")
-	public Vehicle New_Vehicle(JsonNode obj) throws IllegalArgumentException, NullPointerException, ClassNotFoundException {
+	public Vehicle createVehicle(JsonNode data) throws IllegalArgumentException, NullPointerException, ClassNotFoundException {
 		boolean errorFree = true;
-		Vehicle ret = null;
-		if (obj.has("class") && obj.get("class").isTextual()) {
-			String key = obj.get("class").asText();
-			Class<?> clazz = Class.forName("model." + StringUtilities.Standard_CamelCase_Str(key, "\\s"));
+		Vehicle response = null;
+		if (data.has("class") && data.get("class").isTextual()) {
+			String key = data.get("class").asText();
+			Class<?> clazz = Class.forName("model." + StringUtilities.toCamelCase(key));
 			if (factoryList.containsKey(clazz)) 
-				ret = factoryList.get(clazz).Create_Instance(obj);
+				response = factoryList.get(clazz).createInstance(data);
 			else 
 				errorFree = false;
 
@@ -49,10 +49,10 @@ final public class VehicleFactory {
 			errorFree = false;
 		if(errorFree == false)
 			throw new IllegalArgumentException("invalid format");
-		return ret;
+		return response;
 	}
 
-	public <T extends Vehicle> Vehicle reforge(T vehicle, JsonNode obj) throws IllegalArgumentException, NullPointerException {
-		return factory.factoryList.get(vehicle.getClass()).reforge(vehicle, obj);
+	public <T extends Vehicle> Vehicle reforge(T oldVehicle,JsonNode request) throws IllegalArgumentException, NullPointerException {
+		return factory.factoryList.get(oldVehicle.getClass()).reforge(request);
 	} 
 }

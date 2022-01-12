@@ -27,30 +27,28 @@ abstract class I_Vehicle_Factory<T extends Vehicle> {
 
 	}
 
-	abstract T Create_Instance();
+	abstract T createInstance();
 
-	public abstract T Create_Instance(JsonNode obj);
+	abstract T createInstance(JsonNode target);
 
-	abstract T reforge(T vehicle, JsonNode obj);
-
-	final boolean checkPattern(JsonNode obj) {
+	abstract T reforge(JsonNode request);
+	
+	
+	
+	final boolean checkPattern(JsonNode data) {
 		boolean isValidFormat = true;
 		int numberOfKeys = 0;
-		String regex, target, key;
-		Iterator<String> keys = obj.fieldNames();
+		String regex, value, key;
+		Iterator<String> keys = data.fieldNames();
 		while (keys.hasNext()) {
 			key = keys.next();
 			if (!regexMap.containsKey(key)) {
 				isValidFormat = false;
 				break;
 			}
-			/*if (!obj.get(key).isTextual()) {
-				isValidFormat = false;
-				break;
-			}*/
 			regex = regexMap.get(key);
-			target = obj.get(key).asText();
-			if (!target.matches(regex)) {
+			value = data.get(key).asText();
+			if (!value.matches(regex)) {
 				isValidFormat = false;
 				break;
 			}

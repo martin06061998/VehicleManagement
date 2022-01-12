@@ -21,22 +21,22 @@ class MotorbikeFactory extends I_Vehicle_Factory<Motorbike> {
 	}
 
 	@Override
-	Motorbike Create_Instance() {
+	Motorbike createInstance() {
 		return new Motorbike();
 	}
 
 	@Override
-	public Motorbike Create_Instance(JsonNode obj) {
-		boolean isValidFormat = checkPattern(obj);
+	public Motorbike createInstance(JsonNode data) {
+		boolean isValidFormat = checkPattern(data);
 		if (isValidFormat) {
-			Motorbike newMotor = Create_Instance();
-			String id = obj.get("id").asText();
-			String name = obj.get("name").asText();
-			String color = obj.get("color").asText();
-			String price = obj.get("price").asText();
-			String brand = obj.get("brand").asText();
-			String speed = obj.get("speed").asText();
-			String license = obj.get("license").asText();
+			Motorbike newMotor = createInstance();
+			String id = data.get("id").asText();
+			String name = data.get("name").asText();
+			String color = data.get("color").asText();
+			String price = data.get("price").asText();
+			String brand = data.get("brand").asText();
+			String speed = data.get("speed").asText();
+			String license = data.get("license").asText();
 
 			newMotor.setId(Integer.parseInt(id));
 			newMotor.setName(name);
@@ -52,18 +52,21 @@ class MotorbikeFactory extends I_Vehicle_Factory<Motorbike> {
 	}
 
 	@Override
-	Motorbike reforge(Motorbike m, JsonNode obj) {
-		boolean isValidFormat = checkPattern(obj);
+	Motorbike reforge(JsonNode request) {
+		boolean isValidFormat = checkPattern(request);
 		if (isValidFormat) {
-			m.setName(obj.get("name").asText());
-			m.setColor(obj.get("color").asText());
-			m.setPrice(Integer.parseInt(obj.get("color").asText()));
-			m.setBrand(obj.get("brand").asText());
-			m.setSpeed(Float.parseFloat(obj.get("speed").asText()));
-			m.setLicenseRequire(Boolean.parseBoolean(obj.get("license").asText()));
-			return m;
+			Motorbike reforgedMotor = createInstance();
+			reforgedMotor.setId(Integer.parseInt(request.get("id").asText()));
+			reforgedMotor.setName(request.get("name").asText());
+			reforgedMotor.setColor(request.get("color").asText());
+			reforgedMotor.setPrice(Integer.parseInt(request.get("price").asText()));
+			reforgedMotor.setBrand(request.get("brand").asText());
+			reforgedMotor.setSpeed(Float.parseFloat(request.get("speed").asText()));
+			reforgedMotor.setLicenseRequire(Boolean.parseBoolean(request.get("license").asText()));
+			return reforgedMotor;
 		} else {
 			throw new IllegalArgumentException("invalid format");
 		}
 	}
+
 }

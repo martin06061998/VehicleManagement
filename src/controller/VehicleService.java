@@ -6,7 +6,6 @@
 package controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  *
@@ -18,11 +17,11 @@ public interface VehicleService {
 
 	void saveDataToFile();
 
-	JsonNode add(ObjectNode obj);
+	JsonNode add(JsonNode data);
 
-	JsonNode update(JsonNode obj);
+	JsonNode update(JsonNode data);
 
-	JsonNode searchById(int d);
+	JsonNode searchById(int id);
 
 	JsonNode searchByName(String name);
 

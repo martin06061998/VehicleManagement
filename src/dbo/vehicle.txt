@@ -1,3 +1,3 @@
-{"class":"motorbike","id":"0","name":"thinh nguyen","price":"120000","color":"RED","brand":"bmw","license":"true","speed":"123.32"}
-{"class":"motorbike","id":"1","name":"jackie love","price":"327000","color":"GREEN","brand":"martin company","license":"false","speed":"32.12"}
-{"class":"car","id":"2","name":"skyber","price":"123000","color":"BLUE","brand":"black dragun","type":"electric","year":"1993"}
+{"class":"motorbike","id":"0","name":"thinh nguyen","price":"120000","color":"red","brand":"bmw","license":"true","speed":"123.32"}
+{"class":"motorbike","id":"1","name":"jackie love","price":"327000","color":"green","brand":"martin company","license":"false","speed":"32.12"}
+{"class":"car","id":"2","name":"skyber","price":"123000","color":"blue","brand":"black dragun","type":"Electric","year":"1993"}

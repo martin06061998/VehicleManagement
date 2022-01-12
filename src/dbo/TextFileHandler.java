@@ -27,8 +27,8 @@ class TextFileHandler implements FileHandler<List<String>> {
 		}
 		String absolutePath = handler.getAbsolutePath();
 		Path path = Paths.get(absolutePath);
-		List<String> ret = Files.readAllLines(path);
-		return ret;
+		List<String> response = Files.readAllLines(path);
+		return response;
 	}
 
 	@Override
@@ -38,12 +38,12 @@ class TextFileHandler implements FileHandler<List<String>> {
 			throw new IOException("File not found or not readable");
 		}
 		String absolutePath = handler.getAbsolutePath();
-		PrintWriter printWriter = new PrintWriter(absolutePath);
+		PrintWriter printer = new PrintWriter(absolutePath);
 		for(String record : data){
-			printWriter.print(record + "\n");
+			printer.print(record + "\n");
 		}
-		printWriter.flush();
-		printWriter.close();
+		printer.flush();
+		printer.close();
 	}
 	
 }

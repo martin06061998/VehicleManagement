@@ -36,6 +36,6 @@ final public class VehicleServiceProvider {
 	}
 
 	/*public VehicleService getServer(String type) {
-		return managerList.get("default");
+		return managerList.get(type);
 	}*/
 }

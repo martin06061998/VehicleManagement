@@ -5,33 +5,43 @@
  */
 package controller;
 
-import Utilities.StringUtilities;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dbo.FileHandlerManager;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import model.Motorbike;
 import model.Vehicle;
 import model.VehicleFactory;
 
 /**
  *
- * @author marti
+ * @author martin
  */
 final public class VehicleManager implements VehicleService {
 
 	private final transient String filePath = "src\\dbo\\vehicle.txt";
 	private List<Vehicle> vehicleList;
-	transient private static VehicleManager manager;
+	private static final int CAPACITY = 50;
+	private static transient VehicleManager manager;
+	private final transient int MAXIMUM_NUMBER_OF_VEHICLES = Integer.MAX_VALUE;
+	private final transient VehicleManager.IDAllocator idAllocator = new VehicleManager.IDAllocator();
 
 	private VehicleManager() {
 	}
@@ -39,7 +49,7 @@ final public class VehicleManager implements VehicleService {
 	public static VehicleManager getManager() {
 		if (Objects.isNull(manager)) {
 			manager = new VehicleManager();
-			manager.vehicleList = new ArrayList<>();
+			manager.vehicleList = new ArrayList<>(CAPACITY);
 		}
 		return manager;
 	}
@@ -49,14 +59,20 @@ final public class VehicleManager implements VehicleService {
 		try {
 			List<String> data = FileHandlerManager.getInstance().readText(filePath);
 			ObjectMapper mapper = new ObjectMapper();
-			for (String s : data) {
-				JsonNode node = mapper.readTree(s);
-				Vehicle newVehicle = VehicleFactory.getInstane().New_Vehicle(node);
+			for (String record : data) {
+				JsonNode node = mapper.readTree(record);
+				int id = Integer.parseInt(node.get("id").asText());
+				boolean isAllocated = idAllocator.isAllocated(id);
+				if (isAllocated) {
+					continue;
+				}
+				Vehicle newVehicle = VehicleFactory.getInstane().createVehicle(node);
 				vehicleList.add(newVehicle);
+				idAllocator.add(id);
 
 			}
-		} catch (IOException | IllegalArgumentException | NullPointerException | ClassNotFoundException ex) {
-			System.out.println(ex.getMessage());
+		} catch (IOException | RuntimeException  | ClassNotFoundException exception) {
+			//System.out.println(exception.getMessage());
 		}
 	}
 
@@ -68,71 +84,92 @@ final public class VehicleManager implements VehicleService {
 			Objects.requireNonNull(data);
 			FileHandlerManager.getInstance().writeText(data, filePath);
 			message = "save successfully";
-		} catch (IOException | NullPointerException ex) {
+		} catch (IOException | RuntimeException ex) {
 			message = "cannot save data to file";
+		} finally {
+			System.out.println(message);
 		}
 	}
 
 	@Override
-	public JsonNode add(ObjectNode obj) {
+	public JsonNode add(JsonNode data) {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode reply = mapper.createObjectNode();
+		String message = "";
+		String status = "";
 		try {
-			Objects.requireNonNull(obj);
-			obj.put("id", vehicleList.size());
-			Vehicle newVehicle = VehicleFactory.getInstane().New_Vehicle(obj);
+			Objects.requireNonNull(data);
+			System.out.println(data.asText());
+			ObjectNode vehicleData = (ObjectNode) mapper.readTree(data.toString());
+			int id = idAllocator.allocate();
+			vehicleData.put("id", id);
+			Vehicle newVehicle = VehicleFactory.getInstane().createVehicle(vehicleData);
 			vehicleList.add(newVehicle);
-			reply.put("status", "success");
-			reply.put("message", "successfully added");
-		} catch (IllegalArgumentException | ClassNotFoundException | NullPointerException e) {
-			reply.put("status", "success");
-			reply.put("message", "Add to failed due to invalid data type");
-
+			idAllocator.add(id);
+			status = "success";
+			message = "add successfully";
+		} catch (IllegalArgumentException ex) {
+			status = "fail";
+			message = "add failed due to " + ex.getMessage();
+		} catch (RuntimeException | JacksonException | ClassNotFoundException ex) {
+			status = "status";
+			message = "bad request";
 		}
+		reply.put("status", status);
+		reply.put("message", message);
 		return reply;
 	}
 
 	@Override
-	public JsonNode update(JsonNode obj) {
+	public JsonNode update(JsonNode request
+	) {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode reply = mapper.createObjectNode();
+		String message, status;
 		try {
-			String id = obj.get("id").asText();
-			Vehicle v = findUnique((n) -> n.getId() == Integer.parseInt(id));
-			Objects.requireNonNull(v);
-			VehicleFactory.getInstane().reforge(v, obj);
-			reply.put("status", "success");
-			reply.put("message", "sucessfully update");
-		} catch (IllegalArgumentException | NullPointerException e) {
-			reply.put("status", "fail");
-			reply.put("message", "something is wrong, no change is made");
+			Objects.requireNonNull(request);
+			final int id = Integer.parseInt(request.get("id").asText());
+			boolean isAllocated = idAllocator.isAllocated(id);
+			if (!isAllocated) {
+				throw new IllegalArgumentException("Vehicle does not exist”");
+			}
+			Vehicle oldVehicle = findById(id);
+			Vehicle reforgedVehicle = VehicleFactory.getInstane().reforge(oldVehicle, request);
+			int index = vehicleList.indexOf(oldVehicle);
+			vehicleList.set(index, reforgedVehicle); // old vehicle only change when there is no exceptions occur
+			status = "success";
+			message = "sucessfully updated";
+		} catch (IllegalArgumentException ex) {
+			status = "fail";
+			message = "failed due to " + ex.getMessage();
+		} catch (RuntimeException e) {
+			status = "fail";
+			message = "bad request";
 		}
-
+		reply.put("status", status);
+		reply.put("message", message);
 		return reply;
 	}
 
 	@Override
-	public JsonNode searchById(int id) {
+	public JsonNode searchById(int id
+	) {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode reply = mapper.createObjectNode();
-		if (id < 0) {
+		boolean isValidId = idAllocator.isAllocated(id);
+		if (!isValidId) {
 			reply.put("status", "fail");
-			reply.put("message", "id is invalid");
+			reply.put("message", "vehicle does not exist");
 			reply.set("data", mapper.createObjectNode());
 			return reply;
 		}
-		Vehicle ret = findUnique((n) -> n.getId() == id);
-		if (Objects.isNull(ret)) {
-			reply.put("status", "fail");
-			reply.put("message", "no vehicle have such an id");
-			reply.set("data", mapper.createObjectNode());
-		} else {
-			ObjectNode vehicle = (ObjectNode) ret.serialize();
-			vehicle.put("class",   ret.getClass().getSimpleName());
-			reply.put("status", "success");
-			reply.put("message", "a vehicle has been found");
-			reply.set("data", vehicle);
-		}
+		Vehicle vehicle = findById(id);
+		ObjectNode data = (ObjectNode) vehicle.serialize();
+		data.put("class", vehicle.getClass().getSimpleName());
+		reply.put("status", "success");
+		reply.put("message", "a vehicle has been found");
+		reply.set("data", data);
+
 		return reply;
 	}
 
@@ -142,16 +179,17 @@ final public class VehicleManager implements VehicleService {
 		ObjectNode reply = mapper.createObjectNode();
 		try {
 			Objects.requireNonNull(name);
-			List<Vehicle> ret = findAll((n) -> StringUtilities.Standard_Lowercase_Str(n.getName()).contains(StringUtilities.Standard_Lowercase_Str(name)));
-			Objects.requireNonNull(ret);
-			ret.sort((v1, v2) -> v2.getName().compareTo(v1.getName()));
+			final String standardName = name.toLowerCase();
+			List<Vehicle> result = findAll((n) -> standardName.contains(n.getName().toLowerCase()));
+			Objects.requireNonNull(result);
+			result.sort((vehicle1, vehicle2) -> vehicle2.getName().compareTo(vehicle1.getName()));
 			reply.put("status", "success");
 			reply.put("message", "found");
-			ArrayNode data = mapper.valueToTree(ret);
+			ArrayNode data = mapper.valueToTree(result);
 			reply.set("data", data);
-		} catch (IllegalArgumentException | NullPointerException e) {
+		} catch (RuntimeException exception) {
 			reply.put("status", "fail");
-			reply.put("message", "invalid inputl");
+			reply.put("message", "invalid input");
 			ArrayNode data = mapper.createArrayNode();
 			reply.set("data", data);
 		}
@@ -159,33 +197,27 @@ final public class VehicleManager implements VehicleService {
 	}
 
 	@Override
-	public JsonNode delete(int id) {
+	public JsonNode delete(int id
+	) {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode reply = mapper.createObjectNode();
-		if (id < 0) {
+		boolean isIdAllocated = idAllocator.isAllocated(id);
+		if (!isIdAllocated) {
 			reply.put("status", "fail");
-			reply.put("message", "id is invalid, no change is made");
+			reply.put("message", "vehicle does not exist");
 			return reply;
 		}
-		Vehicle ret = findUnique((n) -> n.getId() == id);
-		if (Objects.isNull(ret)) {
-			reply.put("status", "fail");
-			reply.put("message", "id not found, no change is made");
-		} else {
-			//JsonNode node = mapper.valueToTree(ret);
-			vehicleList.remove(ret);
-			reply.put("status", "success");
-			reply.put("message", "successfully deleted");
-		}
+		Vehicle vehicle = findById(id);
+		vehicleList.remove(vehicle);
+		idAllocator.delete(id);
+		reply.put("status", "success");
+		reply.put("message", "successfully deleted");
 		return reply;
 	}
 
 	private void show(List<Vehicle> list) {
 		for (int i = 0; i < list.size(); i++) {
-			System.out.println(list.get(i));
-			if (list.get(i) instanceof Motorbike) {
-				((Motorbike) list.get(i)).makeSound();
-			}
+			System.out.println(list.get(i) + "\n");
 		}
 	}
 
@@ -196,22 +228,26 @@ final public class VehicleManager implements VehicleService {
 
 	@Override
 	public void showAllOrderedByPrice() {
-		List<Vehicle> lst = sort((v1, v2) -> v2.getPrice() - v1.getPrice());
-		if (Objects.isNull(lst)) {
+		List<Vehicle> result = sort((v1, v2) -> v2.getPrice() - v1.getPrice());
+		if (Objects.isNull(result)) {
 			System.out.println("Nothing to show");
 		} else {
-			show(lst);
+			show(result);
 		}
 	}
 
+	private Vehicle findById(int id) {
+		return findUnique((v) -> v.getId() == id);
+	}
+
 	private Vehicle findUnique(Predicate<Vehicle> predicate) {
-		Vehicle ret = vehicleList.stream().filter(predicate).findFirst().orElse(null);
-		return ret;
+		Vehicle response = vehicleList.stream().filter(predicate).findFirst().orElse(null);
+		return response;
 	}
 
 	private List<Vehicle> findAll(Predicate<Vehicle> predicate) {
-		List<Vehicle> ret = vehicleList.stream().filter(predicate).collect(Collectors.toList());
-		return ret.isEmpty() ? null : ret;
+		List<Vehicle> response = vehicleList.stream().filter(predicate).collect(Collectors.toList());
+		return response.isEmpty() ? null : response;
 	}
 
 	public int size() {
@@ -220,20 +256,57 @@ final public class VehicleManager implements VehicleService {
 
 	private List<String> prepareDataForSaving() {
 		int size = vehicleList.size();
-		List<String> ret = null;
+		List<String> response = null;
 		if (size != 0) {
-			Function<Vehicle, String> fun = (n) -> n.serialize().toString();
-			ret = vehicleList.stream().map(fun).collect(Collectors.toList());
+			Function<Vehicle, String> function = (vehicle) -> vehicle.serialize().toString();
+			response = vehicleList.stream().map(function).collect(Collectors.toList());
 		}
-		return ret;
+		return response;
 	}
 
 	private List<Vehicle> sort(Comparator<Vehicle> comparator) {
 		if (vehicleList.isEmpty()) {
 			return null;
 		}
-		List<Vehicle> ret = new ArrayList<>(vehicleList);
-		ret.sort(comparator);
-		return ret;
+		List<Vehicle> response = new ArrayList<>(vehicleList);
+		response.sort(comparator);
+		return response;
+	}
+
+	private class IDAllocator {
+
+		private final HashSet<Integer> allocatedId;
+
+		private IDAllocator() {
+			allocatedId = new HashSet<>();
+		}
+
+		private boolean isAllocated(int id) {
+			return allocatedId.contains(id);
+		}
+
+		@SuppressWarnings("empty-statement")
+		private int allocate() {
+			int size = vehicleList.size();
+			if (size == MAXIMUM_NUMBER_OF_VEHICLES) {
+				return -1;
+			}
+			int id = vehicleList.size();
+			while (allocatedId.contains(id)) {
+				id++;
+			}
+			return id;
+		}
+
+		private boolean add(int id) {
+			allocatedId.add(id);
+			return true;
+		}
+
+		private boolean delete(int id) {
+			allocatedId.remove(id);
+			return true;
+		}
+
 	}
 }

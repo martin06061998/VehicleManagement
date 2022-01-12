@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Utilities;
+package utilities;
 
 import java.util.Scanner;
 
@@ -12,33 +12,33 @@ import java.util.Scanner;
  */
 public class Inputter {
 
-	public static String inputPatternStr(String msg, String pattern) {
-		Scanner sc;
+	public static String inputPatternStr(String message, String pattern) {
+		Scanner scanner;
 		boolean flag = false;
 		String response = "";
 		while (!flag) {
-			sc= new Scanner(System.in); 
+			scanner= new Scanner(System.in); 
 			if (response.matches(pattern)) {
 				flag = true;
 			} else if (response.isEmpty()) {
-				System.out.println(msg);
-				response = sc.nextLine().trim();
+				System.out.println(message);
+				response = scanner.nextLine().trim();
 			} else {
 				System.err.println("Wrong format!");
-				response = sc.nextLine().trim();
+				response = scanner.nextLine().trim();
 			}
 		}
 		return response;
 	}
 
 	public static String inputNotBlankStr(String msg) {
-		Scanner sc;
+		Scanner scanner;
 		boolean flag = false;
 		String response = "";
 		while (!flag) {
 			System.out.println(msg);
-			sc = new Scanner(System.in);
-			response = sc.nextLine().trim();
+			scanner = new Scanner(System.in);
+			response = scanner.nextLine().trim();
 			if (!response.isEmpty()) {
 				flag = true;
 			} else {
@@ -49,104 +49,97 @@ public class Inputter {
 	}
 
 	public static short inputShort(String msg) {
-		Scanner sc;
+		Scanner scanner;
 		boolean flag = false;
 		Short response = 0;
 		String inputData;
 		while (!flag) {
 			try {
 				System.out.println(msg);
-				sc = new Scanner(System.in);
-				inputData = sc.nextLine();
+				scanner = new Scanner(System.in);
+				inputData = scanner.nextLine();
 				response = Short.parseShort(inputData);
 				flag = true;
-			} catch (NumberFormatException e) {
+			} catch (NumberFormatException numberException) {
 				System.err.println("Invalid input. Please enter only number");
 			}
 		}
 		return response;
 	}
 
-	public static boolean inputBoolean(String msg) {
-		Scanner sc;
+	public static boolean inputBoolean(String message) {
+		Scanner scanner;
 		boolean flag = false;
 		boolean response = false;
-		String inputData;
+		String dataInput;
 		while (!flag) {
 			try {
-				System.out.println(msg);
-				sc = new Scanner(System.in);
-				inputData = sc.nextLine();
-				response = Boolean.parseBoolean(inputData);
+				System.out.println(message);
+				scanner = new Scanner(System.in);
+				dataInput = scanner.nextLine();
+				response = Boolean.parseBoolean(dataInput);
 				flag = true;
-			} catch (NumberFormatException e) {
+			} catch (NumberFormatException numberException) {
 				System.err.println("Invalid input. Please enter true/false only");
 			}
 		}
 		return response;
 	}
 
-	public static int inputInteger(String msg) {
-		Scanner sc;
+	public static int inputInteger(String message) {
+		Scanner scanner;
 		boolean flag = false;
 		int response = 0;
-		String inputData;
+		String dataInput;
 		while (!flag) {
 			try {
-				System.out.println(msg);
-				sc = new Scanner(System.in);
-				inputData = sc.nextLine();
-				response = Integer.parseInt(inputData);
+				System.out.println(message);
+				scanner = new Scanner(System.in);
+				dataInput = scanner.nextLine();
+				response = Integer.parseInt(dataInput);
 				flag = true;
-			} catch (NumberFormatException e) {
+			} catch (NumberFormatException numberException) {
 				System.err.println("Invalid input. Please enter only number");
 			}
 		}
 		return response;
 	}
 
-	public static float inputFloat(String msg) {
-		Scanner sc;
+	public static float inputFloat(String message) {
+		Scanner scanner;
 		boolean flag = false;
 		float response = 0;
-		String inputData;
+		String dataInput;
 		while (!flag) {
 			try {
-				System.out.println(msg);
-				sc = new Scanner(System.in);
-				inputData = sc.nextLine();
-				response = Float.parseFloat(inputData);
+				System.out.println(message);
+				scanner = new Scanner(System.in);
+				dataInput = scanner.nextLine();
+				response = Float.parseFloat(dataInput);
 				flag = true;
-			} catch (NumberFormatException e) {
+			} catch (NumberFormatException numberException) {
 				System.err.println("Invalid input. Please enter only number");
 			}
 		}
 		return response;
 	}
 
-	public static double inputDouble(String msg) {
-		Scanner sc;
+	public static double inputDouble(String message) {
+		Scanner scanner;
 		boolean flag = false;
 		double response = 0;
-		String inputData;
+		String dataInput;
 		while (!flag) {
 			try {
-				System.out.println(msg);
-				sc = new Scanner(System.in);
-				inputData = sc.nextLine();
-				response = Double.parseDouble(inputData);
+				System.out.println(message);
+				scanner = new Scanner(System.in);
+				dataInput = scanner.nextLine();
+				response = Double.parseDouble(dataInput);
 				flag = true;
-			} catch (NumberFormatException e) {
+			} catch (NumberFormatException numberException) {
 				System.err.println("Invalid input. Please enter only number");
 			}
 		}
 		return response;
 	}
-
-	/*public static void pressEnterToContinue() {
-		System.out.println("Press \"ENTER\" to continue...");
-		Scanner scanner = new Scanner(System.in);
-		scanner.nextLine();
-		//scanner.close();
-	}*/
 }

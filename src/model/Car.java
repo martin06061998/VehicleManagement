@@ -5,7 +5,7 @@
  */
 package model;
 
-import Utilities.StringUtilities;
+import utilities.StringUtilities;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -16,7 +16,7 @@ import java.util.Objects;
  *
  * @author marti
  */
-public class Car extends Vehicle {
+class Car extends Vehicle {
 
 	String type;
 	int yearOfManufactured;
@@ -26,25 +26,25 @@ public class Car extends Vehicle {
 
 	;
 
-	public Car(int id, String name, String color, int price, String brand, String type, int yearOfManufactured) throws IllegalArgumentException, NullPointerException {
+	Car(int id, String name, String color, int price, String brand, String type, int yearOfManufactured) throws IllegalArgumentException, NullPointerException {
 		super(id, name, color, price, brand);
 		Objects.requireNonNull(type, "arugument \"type\" should not be null");
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-		if (yearOfManufactured <= 1980 || yearOfManufactured > year) {
+		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+		if (yearOfManufactured <= 1980 || yearOfManufactured > currentYear) {
 			throw new IllegalArgumentException("argument \"year\" is invalid");
 		}
-		this.type = StringUtilities.Standard_Lowercase_Str(type);
+		this.type = StringUtilities.toCamelCase(type);
 		this.yearOfManufactured = yearOfManufactured;
 	}
 
-	public void setType(String type) throws NullPointerException {
+	void setType(String type) throws NullPointerException {
 		Objects.requireNonNull(type, "arugument \"type\" should not be null");
-		this.type = StringUtilities.Standard_Lowercase_Str(type);
+		this.type = StringUtilities.toCamelCase(type);
 	}
 
-	public void setYearOfManufactured(int yearOfManufactured) throws IllegalArgumentException {
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-		if (yearOfManufactured <= 1960 || yearOfManufactured > year) {
+	void setYearOfManufactured(int yearOfManufactured) throws IllegalArgumentException {
+		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+		if (yearOfManufactured <= 1960 || yearOfManufactured > currentYear) {
 			throw new IllegalArgumentException("argument \"year\" is invalid");
 		}
 		this.yearOfManufactured = yearOfManufactured;
@@ -61,16 +61,16 @@ public class Car extends Vehicle {
 	@Override
 	public JsonNode serialize() {
 		ObjectMapper mapper = new ObjectMapper();
-		ObjectNode ret = mapper.createObjectNode();
-		ret.put("class", "car");
-		ret.put("id", String.valueOf(id));
-		ret.put("name", name);
-		ret.put("price", String.valueOf(price));
-		ret.put("color", color);
-		ret.put("brand", brand);
-		ret.put("type", type);
-		ret.put("year", String.valueOf(yearOfManufactured));
-		return ret;
+		ObjectNode response = mapper.createObjectNode();
+		response.put("class", "car");
+		response.put("id", String.valueOf(id));
+		response.put("name", name);
+		response.put("price", String.valueOf(price));
+		response.put("color", color);
+		response.put("brand", brand);
+		response.put("type", type);
+		response.put("year", String.valueOf(yearOfManufactured));
+		return response;
 	}
 
 	@Override

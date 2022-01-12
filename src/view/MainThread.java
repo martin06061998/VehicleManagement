@@ -5,11 +5,9 @@
  */
 package view;
 
-import controller.VehicleService;
-import controller.VehicleServiceProvider;
 import static java.lang.System.exit;
 import java.util.ArrayList;
-import static view.Menu.int_getChoice;
+import static view.Menu.getIntChoice;
 
 /**
  *
@@ -21,32 +19,31 @@ public class MainThread {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		VehicleService service = VehicleServiceProvider.getProvider().getService();
-		ArrayList<String> mainMenu = Menu.Load_Main_Menu();
+		ArrayList<String> mainMenu = Menu.loadMainMenu();
 		while (true) {
 			//Menu.clearScreen();
-			int choice = int_getChoice(mainMenu);
+			int choice = getIntChoice(mainMenu);
 			switch (choice) {
 				case 1:
-					Menu.Load_Load_Menu();
+					Menu.loadLoadDataMenu();
 					break;
 				case 2:
-					Menu.Load_Add_Form();
+					Menu.loadAddForm();
 					break;
 				case 3:
-					Menu.Load_Update_Menu();
+					Menu.loadUpdateMenu();
 					break;
 				case 4:
-					Menu.Load_Delete_Form();
+					Menu.loadDeleteMenu();
 					break;
 				case 5:
-					Menu.Load_Search_Menu();
+					Menu.loadSearchMenu();
 					break;
 				case 6:
-					Menu.Load_Show_Menu();
+					Menu.loadShowMenu();
 					break;
 				case 7:
-					Menu.Load_Save_Menu();
+					Menu.loadSaveMenu();
 					break;
 				case 8:
 					System.out.println("good bye");

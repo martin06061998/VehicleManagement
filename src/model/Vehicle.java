@@ -5,7 +5,6 @@
  */
 package model;
 
-import Utilities.StringUtilities;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Objects;
 
@@ -35,32 +34,32 @@ public abstract class Vehicle {
 			throw new IllegalArgumentException("Price should not be negative or zero");
 		}
 		this.id = id;
-		this.name = StringUtilities.Standard_Lowercase_Str(name);
-		this.color = color;
+		this.name = name.toLowerCase();
+		this.color = color.toLowerCase();
 		this.price = price;
-		this.brand = StringUtilities.Standard_Lowercase_Str(brand);
+		this.brand = brand.toLowerCase();
 	}
 
-	public void setId(int id) {
+	void setId(int id) {
 		this.id = id;
 	}
 
-	public void setName(String name) throws IllegalArgumentException, NullPointerException {
+	void setName(String name) throws IllegalArgumentException, NullPointerException {
 		Objects.requireNonNull(name, "arugument \"name\" should not be null");
 		if (name.length() < 4) {
 			throw new IllegalArgumentException("argument \"name\" should be at least 4 characters");
 		}
-		this.name =StringUtilities.Standard_Lowercase_Str(name);
+		this.name = name.toLowerCase();
 	}
 
-	public void setColor(String color) throws NullPointerException {
+	void setColor(String color) throws NullPointerException {
 		Objects.requireNonNull(color, "argument \"color\" should not be null");
-		this.color = color;
+		this.color = color.toLowerCase();
 	}
 
-	public void setBrand(String brand) throws NullPointerException {
+	void setBrand(String brand) throws NullPointerException {
 		Objects.requireNonNull(brand, "arugument \"brand\" should not be null");
-		this.brand = StringUtilities.Standard_Lowercase_Str(brand);
+		this.brand = brand.toLowerCase();
 	}
 
 	/**
@@ -68,7 +67,7 @@ public abstract class Vehicle {
 	 * @param price
 	 * @throws IllegalArgumentException if price is non-positive
 	 */
-	public void setPrice(int price) throws IllegalArgumentException {
+	void setPrice(int price) throws IllegalArgumentException {
 		if (price <= 0) {
 			throw new IllegalArgumentException("Price should not be zero or negative");
 		}
@@ -99,7 +98,7 @@ public abstract class Vehicle {
 
 	@Override
 	public String toString() {
-		return "Id :" + id + "\n" + "Name: " + name + "\n" + "Color: " + color + "\n" + "Price: " + price + "\nBrand"+ brand;
+		return "Id :" + id + "\n" + "Name: " + name + "\n" + "Color: " + color + "\n" + "Price: " + price + "\nBrand: " + brand;
 	}
 
 }
