@@ -34,9 +34,6 @@ class TextFileHandler implements FileHandler<List<String>> {
 	@Override
 	public void write(List<String> data) throws IOException {
 		File handler = new File(filePath);
-		if(!handler.exists() || !handler.canWrite()){
-			throw new IOException("File not found or not readable");
-		}
 		String absolutePath = handler.getAbsolutePath();
 		PrintWriter printer = new PrintWriter(absolutePath);
 		for(String record : data){

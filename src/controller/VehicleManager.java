@@ -5,13 +5,13 @@
  */
 package controller;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dbo.FileHandlerManager;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import model.Vehicle;
 import model.VehicleFactory;
@@ -28,14 +30,14 @@ import static view.MainThread.logger;
  *
  * @author martin
  */
-final public class VehicleManager implements VehicleService {
+final public class VehicleManager implements VehicleService, Serializable {
 
-	private final transient String filePath = "src\\dbo\\vehicle.txt";
+	private static final long serialVersionUID = 2022685098267757690L;
 	private List<Vehicle> vehicleList;
 	private static transient final int CAPACITY = 50;
 	private static transient VehicleManager manager;
 	private final transient int MAXIMUM_NUMBER_OF_VEHICLES = Integer.MAX_VALUE;
-	private final transient VehicleManager.IDAllocator idAllocator = new VehicleManager.IDAllocator();
+	private final VehicleManager.IDAllocator idAllocator = new VehicleManager.IDAllocator();
 
 	private VehicleManager() {
 	}
@@ -65,9 +67,10 @@ final public class VehicleManager implements VehicleService {
 				idAllocator.add(id);
 
 			}
-		} catch (IOException | RuntimeException | ClassNotFoundException ex) {
+		} catch (Exception ex) {
 			logger.throwing("VehicleManager", "VehicleManager.loadDataFromFile", ex);
 		}
+
 	}
 
 	@Override
@@ -76,14 +79,15 @@ final public class VehicleManager implements VehicleService {
 		try {
 			List<String> data = prepareDataForSaving();
 			Objects.requireNonNull(data);
-			FileHandlerManager.getInstance().writeText(data, filePath);
+			FileHandlerManager.getInstance().writeText(data);
 			message = "save successfully";
-		} catch (IOException | RuntimeException ex) {
+		} catch (Exception ex) {
 			message = "cannot save data to file";
 			logger.throwing("VehicleManager", "VehicleManager.saveDataToFile", ex);
 		} finally {
 			System.out.println(message);
 		}
+
 	}
 
 	@Override
@@ -94,19 +98,18 @@ final public class VehicleManager implements VehicleService {
 		String status = "";
 		try {
 			Objects.requireNonNull(data);
-			//System.out.println(data.asText());
 			ObjectNode vehicleData = (ObjectNode) mapper.readTree(data.toString());
-			int id = idAllocator.allocate();
+			int id = manager.idAllocator.allocate();
 			vehicleData.put("id", id);
 			Vehicle newVehicle = VehicleFactory.getInstane().createVehicle(vehicleData);
-			vehicleList.add(newVehicle);
-			idAllocator.add(id);
+			manager.vehicleList.add(newVehicle);
+			manager.idAllocator.add(id);
 			status = "success";
 			message = "add successfully";
 		} catch (IllegalArgumentException ex) {
 			status = "fail";
 			message = "add failed due to " + ex.getMessage();
-		} catch (RuntimeException | JacksonException | ClassNotFoundException ex) {
+		} catch (Exception ex) {
 			status = "status";
 			message = "bad request";
 			logger.throwing("VehicleManager", "VehicleManager.add", ex);
@@ -124,14 +127,14 @@ final public class VehicleManager implements VehicleService {
 		try {
 			Objects.requireNonNull(request);
 			final int id = Integer.parseInt(request.get("id").asText());
-			boolean isAllocated = idAllocator.isAllocated(id);
+			boolean isAllocated = manager.idAllocator.isAllocated(id);
 			if (!isAllocated) {
 				throw new IllegalArgumentException("Vehicle does not exist”");
 			}
 			Vehicle oldVehicle = findById(id);
 			Vehicle reforgedVehicle = VehicleFactory.getInstane().reforge(oldVehicle, request);
-			int index = vehicleList.indexOf(oldVehicle);
-			vehicleList.set(index, reforgedVehicle); // old vehicle only change when there is no exceptions occur
+			int index = manager.vehicleList.indexOf(oldVehicle);
+			manager.vehicleList.set(index, reforgedVehicle); // old vehicle only change when there is no exceptions occur
 			status = "success";
 			message = "sucessfully updated";
 		} catch (IllegalArgumentException ex) {
@@ -152,7 +155,7 @@ final public class VehicleManager implements VehicleService {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode reply = mapper.createObjectNode();
 		ArrayNode data = mapper.createArrayNode();
-		boolean isValidId = idAllocator.isAllocated(id);
+		boolean isValidId = manager.idAllocator.isAllocated(id);
 		if (!isValidId) {
 			reply.put("status", "fail");
 			reply.put("message", "vehicle does not exist");
@@ -207,15 +210,15 @@ final public class VehicleManager implements VehicleService {
 	public JsonNode delete(int id) {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode reply = mapper.createObjectNode();
-		boolean isIdAllocated = idAllocator.isAllocated(id);
+		boolean isIdAllocated = manager.idAllocator.isAllocated(id);
 		if (!isIdAllocated) {
 			reply.put("status", "fail");
 			reply.put("message", "vehicle does not exist");
 			return reply;
 		}
 		Vehicle vehicle = findById(id);
-		vehicleList.remove(vehicle);
-		idAllocator.delete(id);
+		manager.vehicleList.remove(vehicle);
+		manager.idAllocator.delete(id);
 		reply.put("status", "success");
 		reply.put("message", "successfully deleted");
 		return reply;
@@ -225,15 +228,16 @@ final public class VehicleManager implements VehicleService {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode reply = mapper.createObjectNode();
 		ArrayNode data = mapper.createArrayNode();
-		for(Vehicle v : list)
+		for (Vehicle v : list) {
 			data.add(v.serialize());
+		}
 		reply.set("data", data);
 		return reply;
 	}
 
 	@Override
 	public JsonNode showAll() {
-		return show(vehicleList);
+		return show(manager.vehicleList);
 	}
 
 	@Override
@@ -247,40 +251,41 @@ final public class VehicleManager implements VehicleService {
 	}
 
 	private Vehicle findUnique(Predicate<Vehicle> predicate) {
-		Vehicle response = vehicleList.stream().filter(predicate).findFirst().orElse(null);
+		Vehicle response = manager.vehicleList.stream().filter(predicate).findFirst().orElse(null);
 		return response;
 	}
 
 	private List<Vehicle> findAll(Predicate<Vehicle> predicate) {
-		List<Vehicle> response = vehicleList.stream().filter(predicate).collect(Collectors.toList());
+		List<Vehicle> response = manager.vehicleList.stream().filter(predicate).collect(Collectors.toList());
 		return response;
 	}
 
 	public int size() {
-		return vehicleList.size();
+		return manager.vehicleList.size();
 	}
 
 	private List<String> prepareDataForSaving() {
-		int size = vehicleList.size();
+		int size = manager.vehicleList.size();
 		List<String> response = null;
 		if (size != 0) {
 			Function<Vehicle, String> function = (vehicle) -> vehicle.serialize().toString();
-			response = vehicleList.stream().map(function).collect(Collectors.toList());
+			response = manager.vehicleList.stream().map(function).collect(Collectors.toList());
 		}
 		return response;
 	}
 
 	private List<Vehicle> sort(Comparator<Vehicle> comparator) {
-		if (vehicleList.isEmpty()) {
-			return vehicleList;
+		if (manager.vehicleList.isEmpty()) {
+			return manager.vehicleList;
 		}
-		List<Vehicle> response = new ArrayList<>(vehicleList);
+		List<Vehicle> response = new ArrayList<>(manager.vehicleList);
 		response.sort(comparator);
 		return response;
 	}
 
-	private class IDAllocator {
+	private class IDAllocator implements Serializable {
 
+		private static final long serialVersionUID = 2022685098267757691L;
 		private final HashSet<Integer> allocatedId;
 
 		private IDAllocator() {

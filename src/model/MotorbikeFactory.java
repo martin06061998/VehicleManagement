@@ -43,7 +43,7 @@ class MotorbikeFactory extends I_Vehicle_Factory<Motorbike> {
 			newMotor.setColor(color);
 			newMotor.setPrice(Long.parseLong(price));
 			newMotor.setBrand(brand);
-			newMotor.setSpeed(Float.parseFloat(speed));
+			newMotor.setSpeed(Double.parseDouble(speed));
 			newMotor.setLicenseRequire(Boolean.parseBoolean(license));
 			return newMotor;
 		} else {
@@ -59,7 +59,7 @@ class MotorbikeFactory extends I_Vehicle_Factory<Motorbike> {
 			reforgedMotor.setId(Integer.parseInt(request.get("id").asText()));
 			reforgedMotor.setName(request.get("name").asText());
 			reforgedMotor.setColor(request.get("color").asText());
-			reforgedMotor.setPrice(Integer.parseInt(request.get("price").asText()));
+			reforgedMotor.setPrice(Long.parseLong(request.get("price").asText()));
 			reforgedMotor.setBrand(request.get("brand").asText());
 			reforgedMotor.setSpeed(Double.parseDouble(request.get("speed").asText()));
 			reforgedMotor.setLicenseRequire(Boolean.parseBoolean(request.get("license").asText()));

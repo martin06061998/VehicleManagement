@@ -10,7 +10,6 @@ import java.io.IOException;
 import static java.lang.System.exit;
 import java.util.ArrayList;
 import java.util.logging.FileHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -26,19 +25,16 @@ public class MainThread {
 
 	static {
 		try {
-			//LogManager.getLogManager().reset();
-			Logger globalLogger = Logger.getLogger("global");
-			Handler[] handlers = globalLogger.getHandlers();
-			for (Handler handler : handlers) {
-				globalLogger.removeHandler(handler);
-			}
+			logger.setUseParentHandlers(false);
 			logger.setLevel(Level.ALL);
-			FileHandler fh = new java.util.logging.FileHandler("java.log", true);
-			fh.setFormatter(new SimpleFormatter());
-			fh.setLevel(Level.FINER);
-			logger.addHandler(fh);
-		} catch (IOException | SecurityException ex) {
+			FileHandler handler = new FileHandler("project.log", 2048, 1, true);
+			handler.setFormatter(new SimpleFormatter());
+			handler.setLevel(Level.FINER);
+			logger.addHandler(handler);
+		} catch (SecurityException ex) {
 			Logger.getLogger(VehicleManager.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (IOException ex) {
+			Logger.getLogger(MainThread.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 	}

@@ -12,6 +12,6 @@ import java.io.IOException;
  * @author marti
  */
 interface FileHandler<T> {
-	T read() throws IOException;
+	T read() throws Exception;
 	void write(T data) throws IOException;
 }

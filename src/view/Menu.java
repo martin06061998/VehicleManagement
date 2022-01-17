@@ -46,10 +46,10 @@ class Menu {
 		String status = searchResult.get("status").asText();
 		if (status.equals("success")) {
 			printVehicle(searchResult);
-			String choice = Inputter.inputPatternStr("Do you you want to delete this " + searchResult.get("class").asText() + " [y/n]", "[ynYn]");
+			String choice = Inputter.inputPatternStr("Do you you want to delete this " + searchResult.get("class").asText() + " [y/n]", "[yYnN]");
 			if (choice.equalsIgnoreCase("y")) {
 				JsonNode deleteResult = service.delete(id);
-				System.out.println(deleteResult.get("message").asText());
+				printMessage(deleteResult);
 			} else {
 				System.out.println("Cancle request, nothing is changed");
 			}
@@ -88,7 +88,7 @@ class Menu {
 		String brand = Inputter.inputNotBlankStr("Please enter brand");
 		String type = Inputter.inputNotBlankStr("Please enter type");
 		int yearOfManufactured = Inputter.inputInteger("Please enter year of manufactured");
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode item = mapper.createObjectNode();
 		item.put("class", "car");
@@ -99,7 +99,7 @@ class Menu {
 		item.put("brand", brand);
 		item.put("year", String.valueOf(yearOfManufactured));
 		JsonNode reply = service.add(item);
-		System.out.println(reply.get("message").asText());
+		printMessage(reply);
 
 	}
 
@@ -141,7 +141,6 @@ class Menu {
 			default:
 				break;
 		}
-
 	}
 
 	private static void loadSearchByIdMenu() {
@@ -205,7 +204,9 @@ class Menu {
 					continue;
 				}
 				String value = vehicle.get(key).asText();
-				value = StringUtilities.toPretty(value);
+				if (!key.equals("year")) {
+					value = StringUtilities.toPretty(value);
+				}
 				String choice = Inputter.inputPatternStr("Do you you want to change " + key + " ( Old value: " + value + " ) [y/n]", "[ynYN]");
 				if (choice.equalsIgnoreCase("y")) {
 					String newValue = Inputter.inputNotBlankStr("Please enter new " + key);

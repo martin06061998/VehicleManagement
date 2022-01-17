@@ -6,13 +6,14 @@
 package model;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  *
  * @author marti
  */
-public abstract class Vehicle {
+public abstract class Vehicle implements Serializable {
 
 	int id;
 	String name;
