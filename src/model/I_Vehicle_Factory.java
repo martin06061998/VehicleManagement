@@ -12,7 +12,7 @@ import java.util.Iterator;
 /**
  *
  * @author marti
- */
+	 */
 abstract class I_Vehicle_Factory<T extends Vehicle> {
 
 	HashMap<String, String> regexMap;
@@ -20,10 +20,10 @@ abstract class I_Vehicle_Factory<T extends Vehicle> {
 	I_Vehicle_Factory() {
 		regexMap = new HashMap<>();
 		regexMap.put("id", "\\d{1,9}");
-		regexMap.put("name", "[A-Za-z\\s]{1,33}");
-		regexMap.put("price", "\\d{1,8}");
-		regexMap.put("brand", "[A-Za-z\\s]{1,33}");
-		regexMap.put("color", "(?i)(red)|(green)|(blue)");
+		regexMap.put("name", "[0-9A-Za-z\\s-]{1,65}");
+		regexMap.put("price", "\\d{1,18}");
+		regexMap.put("brand", "[A-Za-z\\s]{1,65}");
+		regexMap.put("color", "[A-Za-z\\s]{1,25}");
 
 	}
 

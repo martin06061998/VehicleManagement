@@ -1,3 +1,14 @@
-{"class":"motorbike","id":"0","name":"thinh nguyen","price":"120000","color":"red","brand":"bmw","license":"true","speed":"123.32"}
-{"class":"motorbike","id":"1","name":"jackie love","price":"327000","color":"green","brand":"martin company","license":"false","speed":"32.12"}
-{"class":"car","id":"2","name":"skyber","price":"123000","color":"blue","brand":"black dragun","type":"Electric","year":"1993"}
+{"class":"car","id":"0","name":"brio","color":"red","price":"418000000","brand":"honda","type":"petrol","year":"2020"}
+{"class":"car","id":"1","name":"city","color":"red","price":"529000000","brand":"honda","type":"petrol","year":"1999"}
+{"class":"car","id":"2","name":"civic","color":"red","price":"729000000","brand":"honda","type":"petrol","year":"1999"}
+{"class":"car","id":"3","name":"hr-v","color":"red","price":"786000000","brand":"honda","type":"petrol","year":"1999"}
+{"class":"car","id":"4","name":"accord","color":"red","price":"529000000","brand":"honda","type":"petrol","year":"1999"}
+{"class":"car","id":"5","name":"cr-v","color":"red","price":"798000000","brand":"honda","type":"petrol","year":"1999"}
+{"class":"car","id":"6","name":"model s","color":"while","price":"2000000000","brand":"tesla","type":"electric","year":"2020"}
+{"class":"car","id":"7","name":"model x","color":"yellow","price":"3000000000","brand":"tesla","type":"electric","year":"2020"}
+{"class":"car","id":"8","name":"model y","color":"red","price":"998000000","brand":"honda","type":"petrol","year":"2020"}
+{"class":"car","id":"15","name":"model 3","color":"red","price":"698000000","brand":"honda","type":"petrol","year":"2020"}
+{"class":"motorbike","id":"10","name":"yamaha xsr","color":"black","price":"75000000","brand":"yamaha","license":"true","speed":"56.650001525878906"}
+{"class":"motorbike","id":"11","name":"yzf-r3","color":"blue","price":"129000000","brand":"yamaha","license":"true","speed":"95.6500015258789"}
+{"class":"motorbike","id":"12","name":"tfx 149","color":"yellow","price":"72900000","brand":"yamaha","license":"true","speed":"65.12000274658203"}
+{"class":"motorbike","id":"13","name":"mt-15","color":"black","price":"56000000","brand":"yamaha","license":"true","speed":"125.3499984741211"}

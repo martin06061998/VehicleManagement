@@ -27,7 +27,7 @@ public interface VehicleService {
 
 	JsonNode delete(int id);
 
-	void showAll();
+	JsonNode showAll();
 
-	void showAllOrderedByPrice();
+	JsonNode showAllOrderedByPrice();
 }

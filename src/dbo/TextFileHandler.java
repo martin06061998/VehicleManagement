@@ -18,9 +18,9 @@ import java.util.List;
  * @author marti
  */
 class TextFileHandler implements FileHandler<List<String>> {
-
+	private final transient String filePath = "src\\dbo\\vehicle.txt";
 	@Override
-	public List<String> read(String filePath) throws IOException {
+	public List<String> read() throws IOException {
 		File handler = new File(filePath);
 		if(!handler.exists() || !handler.canRead()){
 			throw new IOException("File not found or not readable");
@@ -32,7 +32,7 @@ class TextFileHandler implements FileHandler<List<String>> {
 	}
 
 	@Override
-	public void write(List<String> data, String filePath) throws IOException {
+	public void write(List<String> data) throws IOException {
 		File handler = new File(filePath);
 		if(!handler.exists() || !handler.canWrite()){
 			throw new IOException("File not found or not readable");

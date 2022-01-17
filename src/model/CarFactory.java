@@ -41,7 +41,7 @@ class CarFactory extends I_Vehicle_Factory<Car> {
 			newCar.setId(Integer.parseInt(id));
 			newCar.setName(name);
 			newCar.setColor(color);
-			newCar.setPrice(Integer.parseInt(price));
+			newCar.setPrice(Long.parseLong(price));
 			newCar.setBrand(brand);
 			newCar.setType(type);
 			newCar.setYearOfManufactured(Integer.parseInt(year));
@@ -59,7 +59,7 @@ class CarFactory extends I_Vehicle_Factory<Car> {
 			reforgedCar.setId(Integer.parseInt(request.get("id").asText()));
 			reforgedCar.setName(request.get("name").asText());
 			reforgedCar.setColor((request.get("color").asText()));		
-			reforgedCar.setPrice(Integer.parseInt(request.get("price").asText()));
+			reforgedCar.setPrice(Long.parseLong(request.get("price").asText()));
 			reforgedCar.setBrand(request.get("brand").asText());
 			reforgedCar.setType(request.get("type").asText());
 			reforgedCar.setYearOfManufactured(Integer.parseInt(request.get("year").asText()));

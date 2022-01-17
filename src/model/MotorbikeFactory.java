@@ -17,7 +17,7 @@ class MotorbikeFactory extends I_Vehicle_Factory<Motorbike> {
 		super();
 		regexMap.put("class", "(?i)motorbike");
 		regexMap.put("license", "([tT][rR][uU][eE])|([fF][aA][lL][sS][eE])");
-		regexMap.put("speed", "\\d{1,8}|(\\d{1,8}\\.\\d{1,8})");
+		regexMap.put("speed", "\\d{1,15}|(\\d{1,15}\\.\\d{1,15})");
 	}
 
 	@Override
@@ -41,7 +41,7 @@ class MotorbikeFactory extends I_Vehicle_Factory<Motorbike> {
 			newMotor.setId(Integer.parseInt(id));
 			newMotor.setName(name);
 			newMotor.setColor(color);
-			newMotor.setPrice(Integer.parseInt(price));
+			newMotor.setPrice(Long.parseLong(price));
 			newMotor.setBrand(brand);
 			newMotor.setSpeed(Float.parseFloat(speed));
 			newMotor.setLicenseRequire(Boolean.parseBoolean(license));
@@ -61,7 +61,7 @@ class MotorbikeFactory extends I_Vehicle_Factory<Motorbike> {
 			reforgedMotor.setColor(request.get("color").asText());
 			reforgedMotor.setPrice(Integer.parseInt(request.get("price").asText()));
 			reforgedMotor.setBrand(request.get("brand").asText());
-			reforgedMotor.setSpeed(Float.parseFloat(request.get("speed").asText()));
+			reforgedMotor.setSpeed(Double.parseDouble(request.get("speed").asText()));
 			reforgedMotor.setLicenseRequire(Boolean.parseBoolean(request.get("license").asText()));
 			return reforgedMotor;
 		} else {

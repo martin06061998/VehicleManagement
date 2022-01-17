@@ -17,7 +17,7 @@ public class Inputter {
 		boolean flag = false;
 		String response = "";
 		while (!flag) {
-			scanner= new Scanner(System.in); 
+			scanner = new Scanner(System.in);
 			if (response.matches(pattern)) {
 				flag = true;
 			} else if (response.isEmpty()) {
@@ -81,6 +81,25 @@ public class Inputter {
 				flag = true;
 			} catch (NumberFormatException numberException) {
 				System.err.println("Invalid input. Please enter true/false only");
+			}
+		}
+		return response;
+	}
+
+	public static long inputLong(String message) {
+		Scanner scanner;
+		boolean flag = false;
+		long response = 0;
+		String dataInput;
+		while (!flag) {
+			try {
+				System.out.println(message);
+				scanner = new Scanner(System.in);
+				dataInput = scanner.nextLine();
+				response = Long.parseLong(dataInput);
+				flag = true;
+			} catch (NumberFormatException numberException) {
+				System.err.println("Invalid input. Please enter only number");
 			}
 		}
 		return response;

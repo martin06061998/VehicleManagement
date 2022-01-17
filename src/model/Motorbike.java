@@ -15,13 +15,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 class Motorbike extends Vehicle {
 
-	float speed;
+	double speed;
 	boolean licenseRequire;
 
 	Motorbike() {
 	}
 
-	Motorbike(int id, String name, String color, int price, String brand, float speed, boolean licenseRequire) throws IllegalArgumentException, NullPointerException {
+	Motorbike(int id, String name, String color, int price, String brand, double speed, boolean licenseRequire) throws IllegalArgumentException, NullPointerException {
 		super(id, name, color, price, brand);
 		if (speed <= 0) {
 			throw new IllegalArgumentException("speed should not positive");
@@ -34,18 +34,18 @@ class Motorbike extends Vehicle {
 		this.licenseRequire = licenseRequire;
 	}
 
-	void setSpeed(float speed) throws IllegalArgumentException {
+	void setSpeed(double speed) throws IllegalArgumentException {
 		if (speed <= 0) {
 			throw new IllegalArgumentException("speed should not positive");
 		}
 		this.speed = speed;
 	}
 
-	public void makeSound() {
-		System.out.println("tin tin tin");
+	public String makeSound() {
+		return "tin tin tin";
 	}
 
-	public float getSpeed() {
+	public double getSpeed() {
 		return speed;
 	}
 
@@ -60,8 +60,8 @@ class Motorbike extends Vehicle {
 		response.put("class", "motorbike");
 		response.put("id", String.valueOf(id));
 		response.put("name", name);
-		response.put("price", String.valueOf(price));
 		response.put("color", color);
+		response.put("price", String.valueOf(price));
 		response.put("brand", brand);
 		response.put("license", String.valueOf(licenseRequire));
 		response.put("speed", String.valueOf(speed));
@@ -70,7 +70,8 @@ class Motorbike extends Vehicle {
 
 	@Override
 	public String toString() {
-		return "Class: Motorbike: tin tin tin " + "+\n" + super.toString() + "\n" + "Speed: " + speed + "\nLicense require: " + licenseRequire;
+		return "Class: Motorbike: tin tin tin " + makeSound() + "\n" + super.toString() + "\n" + "Speed: " + speed + "\nLicense require: " + licenseRequire;
 	}
+
 
 }

@@ -17,13 +17,13 @@ public abstract class Vehicle {
 	int id;
 	String name;
 	String color;
-	int price;
+	long price;
 	String brand;
 
 	Vehicle() {
 	}
 
-	Vehicle(int id, String name, String color, int price, String brand) throws IllegalArgumentException, NullPointerException {
+	Vehicle(int id, String name, String color, long price, String brand) throws IllegalArgumentException, NullPointerException {
 		Objects.requireNonNull(name, "arugument \"name\" should not be null");
 		Objects.requireNonNull(brand, "arugument \"brand\" should not be null");
 		Objects.requireNonNull(color, "argument \"color\" should not be null");
@@ -67,7 +67,7 @@ public abstract class Vehicle {
 	 * @param price
 	 * @throws IllegalArgumentException if price is non-positive
 	 */
-	void setPrice(int price) throws IllegalArgumentException {
+	void setPrice(long price) throws IllegalArgumentException {
 		if (price <= 0) {
 			throw new IllegalArgumentException("Price should not be zero or negative");
 		}
@@ -86,7 +86,7 @@ public abstract class Vehicle {
 		return color;
 	}
 
-	public int getPrice() {
+	public long getPrice() {
 		return price;
 	}
 
@@ -95,7 +95,10 @@ public abstract class Vehicle {
 	}
 
 	public abstract JsonNode serialize();
+	
 
+	
+	
 	@Override
 	public String toString() {
 		return "Id :" + id + "\n" + "Name: " + name + "\n" + "Color: " + color + "\n" + "Price: " + price + "\nBrand: " + brand;

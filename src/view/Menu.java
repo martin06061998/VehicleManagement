@@ -12,8 +12,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import controller.VehicleService;
 import controller.VehicleServiceProvider;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -22,6 +25,7 @@ import java.util.List;
 class Menu {
 
 	private static final VehicleService service = VehicleServiceProvider.getProvider().getService();
+	private static final int BLOCK_SIZE = 14;
 
 	static ArrayList<String> loadMainMenu() {
 		ArrayList<String> options = new ArrayList<>();
@@ -37,12 +41,12 @@ class Menu {
 	}
 
 	static void loadDeleteMenu() {
-		int id = Inputter.inputInteger("Please the id of the car you want to delete");
+		int id = Inputter.inputInteger("Please the id of the vehicle you want to delete");
 		JsonNode searchResult = service.searchById(id);
 		String status = searchResult.get("status").asText();
 		if (status.equals("success")) {
 			printVehicle(searchResult);
-			String choice = Inputter.inputPatternStr("Do you you want to delete this car [y/n]", "[ynYn]");
+			String choice = Inputter.inputPatternStr("Do you you want to delete this " + searchResult.get("class").asText() + " [y/n]", "[ynYn]");
 			if (choice.equalsIgnoreCase("y")) {
 				JsonNode deleteResult = service.delete(id);
 				System.out.println(deleteResult.get("message").asText());
@@ -80,11 +84,11 @@ class Menu {
 		System.out.println("Welcome To Car Add Form");
 		String name = Inputter.inputNotBlankStr("Please enter name");
 		String color = Inputter.inputNotBlankStr("Please enter color");
-		int price = Inputter.inputInteger("Please enter price");
+		long price = Inputter.inputLong("Please enter price");
 		String brand = Inputter.inputNotBlankStr("Please enter brand");
 		String type = Inputter.inputNotBlankStr("Please enter type");
 		int yearOfManufactured = Inputter.inputInteger("Please enter year of manufactured");
-
+		
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode item = mapper.createObjectNode();
 		item.put("class", "car");
@@ -103,9 +107,9 @@ class Menu {
 		System.out.println("Welcome To Motorbike Add Form");
 		String name = Inputter.inputNotBlankStr("Please enter name");
 		String color = Inputter.inputNotBlankStr("Please enter color");
-		int price = Inputter.inputInteger("Please enter price");
+		long price = Inputter.inputLong("Please enter price");
 		String brand = Inputter.inputNotBlankStr("Please enter brand");
-		float speed = Inputter.inputFloat("Please enter speed");
+		double speed = Inputter.inputDouble("Please enter speed");
 		boolean license = Inputter.inputBoolean("Is the motorbike require license:");
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -118,7 +122,7 @@ class Menu {
 		item.put("speed", String.valueOf(speed));
 		item.put("license", String.valueOf(license));
 		JsonNode reply = service.add(item);
-		System.out.println(reply.get("message").asText());
+		printMessage(reply);
 	}
 
 	static void loadSearchMenu() {
@@ -142,17 +146,17 @@ class Menu {
 
 	private static void loadSearchByIdMenu() {
 		System.out.println("Search By Id");
-		int choice = Inputter.inputInteger("Please enter the id of the car you want to search");
+		int choice = Inputter.inputInteger("Please enter the id of the vehicle you want to search");
 		JsonNode response = service.searchById(choice);
-		System.out.println(response.get("message").asText());
+		printMessage(response);
 		printVehicle(response);
 	}
 
 	private static void loadSearchByNameMenu() {
 		System.out.println("Search By Name");
-		String name = Inputter.inputNotBlankStr("Please enter the name of the car");
+		String name = Inputter.inputNotBlankStr("Please enter the name of the vehicle");
 		JsonNode response = service.searchByName(name);
-		System.out.println(response.get("message").asText());
+		printMessage(response);
 		printVehicle(response);
 	}
 
@@ -174,24 +178,25 @@ class Menu {
 		int choice = getIntChoice(options);
 		switch (choice) {
 			case 1:
-				service.showAll();
+				JsonNode reply1 = service.showAll();
+				printVehicle(reply1);
 				break;
 			case 2:
-				service.showAllOrderedByPrice();
+				JsonNode reply2 = service.showAllOrderedByPrice();
+				printVehicle(reply2);
 				break;
 			default:
 				break;
 		}
-
 	}
 
 	static void loadUpdateMenu() {
-		int id = Inputter.inputInteger("Please enter the id of the car you want to update");
+		int id = Inputter.inputInteger("Please enter the id of the vehicle you want to update");
 		ObjectNode response = (ObjectNode) service.searchById(id);
 		if (getStatus(response).equals("fail")) {
 			printMessage(response);
 		} else {
-			ObjectNode vehicle = (ObjectNode) response.get("data");
+			ObjectNode vehicle = (ObjectNode) response.get("data").get(0);
 			Iterator<String> keys = vehicle.fieldNames();
 			String key;
 			while (keys.hasNext()) {
@@ -200,6 +205,7 @@ class Menu {
 					continue;
 				}
 				String value = vehicle.get(key).asText();
+				value = StringUtilities.toPretty(value);
 				String choice = Inputter.inputPatternStr("Do you you want to change " + key + " ( Old value: " + value + " ) [y/n]", "[ynYN]");
 				if (choice.equalsIgnoreCase("y")) {
 					String newValue = Inputter.inputNotBlankStr("Please enter new " + key);
@@ -210,7 +216,7 @@ class Menu {
 			printMessage(updateResponse);
 			if (getStatus(updateResponse).equals("success")) {
 				System.out.println("Update Result");
-				printNode(vehicle);
+				printVehicle(response);
 			}
 		}
 	}
@@ -224,27 +230,96 @@ class Menu {
 	}
 
 	private static void printVehicle(JsonNode node) {
-		JsonNode data = node.get("data");
-		if (data.isObject()) {
-			printNode(data);
-		} else {
-			Iterator<JsonNode> iterator = data.iterator();
-			while (iterator.hasNext()) {
-				JsonNode element = iterator.next();
-				printNode(element);
-				System.out.println();
+		LinkedHashMap<String, Integer> keyMap = new LinkedHashMap<>();
+		HashMap<String, LinkedHashMap<String, Integer>> keyMapTable = new HashMap<>();
+		JsonNode dataElement = node.get("data");
+		if (dataElement.isArray()) {
+			String oldClass = null;
+			if (dataElement.size() == 0) {
+				System.out.println("Nothing to show");
+			} else {
+				for (JsonNode element : dataElement) {
+					if (Objects.isNull(oldClass)) {
+						oldClass = (element.get("class")).asText();
+						keyMap = calculateSize(oldClass, node);
+						keyMapTable.put(oldClass, keyMap);
+						printHeader(keyMap);
+					} else {
+						String newClass = element.get("class").asText();
+						if (!oldClass.equals(newClass)) {
+							System.out.println("");
+							if (keyMapTable.containsKey(newClass)) {
+								keyMap = keyMapTable.get(newClass);
+							} else {
+								keyMap = calculateSize(newClass, node);
+							}
+							printHeader(keyMap);
+						}
+						oldClass = newClass;
+					}
+					printElement(element, keyMap);
+				}
 			}
 		}
+
 	}
 
-	private static void printNode(JsonNode node) {
-		Iterator<String> keys = node.fieldNames();
-		while (keys.hasNext()) {
-			String key = keys.next();
-			String value = node.get(key).asText();
-			System.out.println(key + ": " + value);
+	private static void printElement(JsonNode element, LinkedHashMap<String, Integer> keyMap) {
+		Iterator<String> fieldNames = element.fieldNames();
+		while (fieldNames.hasNext()) {
+			String field = fieldNames.next();
+			int numberOfCharacter = keyMap.get(field);
+			String value = element.get(field).asText();
+			if (!field.contains("id") && !field.contains("year")) {
+				value = StringUtilities.toPretty(value);
+			}
+			int padding = (numberOfCharacter - value.length()) / 2;
+			String leftAlign = StringUtilities.generateRepeatedString(" ", padding);
+			String rightAlign = StringUtilities.generateRepeatedString(" ", numberOfCharacter - padding - value.length());
+			String outputString = "|" + leftAlign + value + rightAlign + "|";
+			System.out.print(outputString);
 		}
 		System.out.println();
+	}
+
+	private static void printHeader(LinkedHashMap<String, Integer> keyMap) {
+		for (String key : keyMap.keySet()) {
+			int numberOfCharacter = keyMap.get(key);
+			int padding = (numberOfCharacter - key.length()) / 2;
+			String leftAlign = StringUtilities.generateRepeatedString(" ", padding);
+			String rightAlign = StringUtilities.generateRepeatedString(" ", numberOfCharacter - padding - key.length());
+			String outputString = "|" + leftAlign + key.toUpperCase() + rightAlign + "|";
+			System.out.print(outputString);
+		}
+		System.out.println();
+	}
+
+	private static LinkedHashMap<String, Integer> calculateSize(String clazz, JsonNode node) {
+		JsonNode dataElement = node.get("data");
+		LinkedHashMap<String, Integer> keyMap = new LinkedHashMap<>();
+		Iterator<JsonNode> iterator = dataElement.iterator();
+		while (iterator.hasNext()) {
+			JsonNode element = iterator.next();
+			Iterator<String> fieldNames = element.fieldNames();
+			if (!(element.get("class").asText()).equals(clazz)) {
+				continue;
+			}
+			while (fieldNames.hasNext()) {
+				String key = fieldNames.next();
+				String value = element.get(key).asText();
+				if (keyMap.containsKey(key)) {
+					int newLength = (int) Math.ceil(value.length() / BLOCK_SIZE) * BLOCK_SIZE + BLOCK_SIZE;
+					int oldLength = keyMap.get(key);
+					if (newLength > oldLength) {
+						keyMap.put(key, newLength);
+					}
+				} else {
+					int newLength = (int) Math.ceil(value.length() / BLOCK_SIZE) * BLOCK_SIZE + BLOCK_SIZE;
+					keyMap.put(key, newLength);
+				}
+			}
+		}
+		return keyMap;
 	}
 
 	static <T> T getRefChoice(List<T> options) {

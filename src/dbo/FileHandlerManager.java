@@ -31,12 +31,12 @@ final public class FileHandlerManager {
 		return manager;
 	}
 
-	public List<String> readText(String filePath) throws IOException {
-		List<String> data = (List<String>) manager.handlerList.get("TextFileHandler").read(filePath);
+	public List<String> readText() throws IOException {
+		List<String> data = (List<String>) manager.handlerList.get("TextFileHandler").read();
 		return data;
 	}
 
 	public void writeText(List<String> data, String filePath) throws IOException {
-		manager.handlerList.get("TextFileHandler").write(data, filePath);
+		manager.handlerList.get("TextFileHandler").write(data);
 	}
 }
