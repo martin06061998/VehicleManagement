@@ -27,7 +27,7 @@ public class MainThread {
 		try {
 			logger.setUseParentHandlers(false);
 			logger.setLevel(Level.ALL);
-			FileHandler handler = new FileHandler("project.log", 2048, 1, true);
+			FileHandler handler = new FileHandler("log\\project.log", 2048, 1, true);
 			handler.setFormatter(new SimpleFormatter());
 			handler.setLevel(Level.FINER);
 			logger.addHandler(handler);

@@ -21,7 +21,7 @@ class Motorbike extends Vehicle {
 	Motorbike() {
 	}
 
-	Motorbike(int id, String name, String color, int price, String brand, double speed, boolean licenseRequire) throws IllegalArgumentException, NullPointerException {
+	Motorbike(int id, String name, String color, long price, String brand, double speed, boolean licenseRequire) throws IllegalArgumentException, NullPointerException {
 		super(id, name, color, price, brand);
 		if (speed <= 0) {
 			throw new IllegalArgumentException("speed should not positive");
@@ -36,7 +36,7 @@ class Motorbike extends Vehicle {
 
 	void setSpeed(double speed) throws IllegalArgumentException {
 		if (speed <= 0) {
-			throw new IllegalArgumentException("speed should not positive");
+			throw new IllegalArgumentException("speed should not be negative or zero");
 		}
 		this.speed = speed;
 	}

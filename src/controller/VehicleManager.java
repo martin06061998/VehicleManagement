@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dbo.FileHandlerManager;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,8 +18,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import model.Vehicle;
 import model.VehicleFactory;
@@ -164,7 +161,6 @@ final public class VehicleManager implements VehicleService, Serializable {
 		}
 		Vehicle vehicle = findById(id);
 		data.add(vehicle.serialize());
-		reply.put("class", vehicle.getClass().getSimpleName());
 		reply.put("status", "success");
 		reply.put("message", "a vehicle has been found");
 		reply.set("data", data);

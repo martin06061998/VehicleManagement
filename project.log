@@ -1,1 +1,15 @@
 
+Jan 19, 2022 5:24:40 PM MainThread main
+FINER: THROW
+java.lang.NullPointerException
+	at view.Menu.loadDeleteMenu(Menu.java:49)
+	at view.MainThread.main(MainThread.java:61)
+
+Jan 19, 2022 5:37:43 PM VehicleManager VehicleManager.saveDataToFile
+FINER: THROW
+java.lang.NullPointerException
+	at java.util.Objects.requireNonNull(Objects.java:203)
+	at controller.VehicleManager.saveDataToFile(VehicleManager.java:78)
+	at view.Menu.loadSaveMenu(Menu.java:165)
+	at view.MainThread.main(MainThread.java:70)
+

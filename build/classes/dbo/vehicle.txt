@@ -9,6 +9,6 @@
 {"class":"car","id":"8","name":"model y","color":"red","price":"998000000","brand":"tesla","type":"electric","year":"2020"}
 {"class":"car","id":"15","name":"model 3","color":"red","price":"698000000","brand":"tesla","type":"electric","year":"2020"}
 {"class":"motorbike","id":"10","name":"yamaha xsr","color":"black","price":"75000000","brand":"yamaha","license":"true","speed":"56.650001525878906"}
-{"class":"motorbike","id":"11","name":"yzf-r3","color":"blue","price":"129000000","brand":"yamaha","license":"true","speed":"95.6500015258789"}
 {"class":"motorbike","id":"12","name":"tfx 149","color":"yellow","price":"72900000","brand":"yamaha","license":"true","speed":"65.12000274658203"}
-{"class":"motorbike","id":"13","name":"mt-15","color":"black","price":"56000000","brand":"yamaha","license":"true","speed":"125.3499984741211"}
+{"class":"motorbike","id":"16","name":"mot-luxu001","color":"red yellow","price":"16000000000","brand":"martin","license":"true","speed":"236.32"}
+{"class":"motorbike","id":"11","name":"yzf-r3","color":"blue","price":"129000000","brand":"yamaha","license":"true","speed":"95.6500015258789"}

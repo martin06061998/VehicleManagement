@@ -43,10 +43,11 @@ class Menu {
 	static void loadDeleteMenu() {
 		int id = Inputter.inputInteger("Please the id of the vehicle you want to delete");
 		JsonNode searchResult = service.searchById(id);
-		String status = searchResult.get("status").asText();
+		String status = getStatus(searchResult);
 		if (status.equals("success")) {
 			printVehicle(searchResult);
-			String choice = Inputter.inputPatternStr("Do you you want to delete this " + searchResult.get("class").asText() + " [y/n]", "[yYnN]");
+			String clazz = searchResult.get("data").get(0).get("class").asText();
+			String choice = Inputter.inputPatternStr("Do you you want to delete this " + clazz + " [y/n]", "[yYnN]");
 			if (choice.equalsIgnoreCase("y")) {
 				JsonNode deleteResult = service.delete(id);
 				printMessage(deleteResult);

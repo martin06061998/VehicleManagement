@@ -4,11 +4,13 @@
 {"class":"car","id":"3","name":"hr-v","color":"red","price":"786000000","brand":"honda","type":"petrol","year":"1999"}
 {"class":"car","id":"4","name":"accord","color":"red","price":"529000000","brand":"honda","type":"petrol","year":"1999"}
 {"class":"car","id":"5","name":"cr-v","color":"red","price":"798000000","brand":"honda","type":"petrol","year":"1999"}
-{"class":"car","id":"6","name":"model s","color":"while","price":"2000000000","brand":"tesla","type":"electric","year":"2020"}
+{"class":"car","id":"6","name":"model s","color":"while","price":"2000000000","brand":"tesla","type":"electric","year":"2021"}
 {"class":"car","id":"7","name":"model x","color":"yellow","price":"3000000000","brand":"tesla","type":"electric","year":"2020"}
 {"class":"car","id":"8","name":"model y","color":"red","price":"998000000","brand":"tesla","type":"electric","year":"2020"}
 {"class":"car","id":"15","name":"model 3","color":"red","price":"698000000","brand":"tesla","type":"electric","year":"2020"}
-{"class":"motorbike","id":"10","name":"yamaha xsr","color":"black","price":"75000000","brand":"yamaha","license":"true","speed":"56.650001525878906"}
-{"class":"motorbike","id":"12","name":"tfx 149","color":"yellow","price":"72900000","brand":"yamaha","license":"true","speed":"65.12000274658203"}
-{"class":"motorbike","id":"16","name":"mot-luxu001","color":"red yellow","price":"16000000000","brand":"martin","license":"true","speed":"236.32"}
-{"class":"motorbike","id":"11","name":"yzf-r3","color":"blue","price":"129000000","brand":"yamaha","license":"true","speed":"95.6500015258789"}
+{"class":"motorbike","id":"10","name":"yamaha xsr","color":"black","price":"75000000","brand":"yamaha","license":"true","speed":"56.65"}
+{"class":"motorbike","id":"16","name":"king-luxury","color":"red yellow","price":"20000000000","brand":"martin","license":"true","speed":"236.32"}
+{"class":"motorbike","id":"11","name":"yzf-r3","color":"blue","price":"129000000","brand":"yamaha","license":"true","speed":"95.65"}
+{"class":"car","id":"14","name":"cat-lux","color":"red blue","price":"5600000000","brand":"martin","type":"hydro","year":"2021"}
+{"class":"car","id":"17","name":"queenxyz","color":"white","price":"45000000000","brand":"martin","type":"atomic","year":"2021"}
+{"class":"motorbike","id":"18","name":"guard","color":"red","price":"562000000","brand":"martin","license":"true","speed":"569.32"}

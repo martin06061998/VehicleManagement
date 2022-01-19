@@ -25,7 +25,7 @@ class Car extends Vehicle {
 
 	;
 
-	Car(int id, String name, String color, int price, String brand, String type, int yearOfManufactured) throws IllegalArgumentException, NullPointerException {
+	Car(int id, String name, String color, long price, String brand, String type, int yearOfManufactured) throws IllegalArgumentException, NullPointerException {
 		super(id, name, color, price, brand);
 		Objects.requireNonNull(type, "arugument \"type\" should not be null");
 		int currentYear = Calendar.getInstance().get(Calendar.YEAR);

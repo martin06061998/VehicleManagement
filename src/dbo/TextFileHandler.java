@@ -18,7 +18,7 @@ import java.util.List;
  * @author marti
  */
 class TextFileHandler implements FileHandler<List<String>> {
-	private final transient String filePath = "src\\dbo\\vehicle.txt";
+	private final String filePath = "database\\vehicle.txt";
 	@Override
 	public List<String> read() throws IOException {
 		File handler = new File(filePath);
